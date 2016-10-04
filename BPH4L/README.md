@@ -1,5 +1,5 @@
 
-## X->J/psi+Y->2mu2l Analysis Package
+# X->J/psi+Y->2mu2l Analysis Package
 
 Analysis package of BPH exotics search for X->Jpis+Y->2mu2l final states.
  
@@ -7,7 +7,7 @@ For 80X analysis.
 
 For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental#CMGTools_lite_release_for_ICHEP).
 
-### Basic setup (from the above link) is this:
+## Basic setup (from the above link) is this:
 
 #### Set up CMSSW and the base git
 
