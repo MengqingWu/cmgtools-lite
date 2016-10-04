@@ -41,6 +41,7 @@ git checkout -b heppy_80X cmg-central/heppy_80X
 ```
 git remote add origin git@github.com:YOUR_GITHUB_REPOSITORY/cmg-cmssw.git
 git push -u origin heppy_80X
+```
 
 #### Now get the CMGTools subsystem from the cmgtools-lite repository
 
