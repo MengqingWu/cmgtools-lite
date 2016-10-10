@@ -2,7 +2,7 @@ import ROOT
 import sys
 from array import array
 import pickle
-from CMGTools.XZZ2l2nu.plotting.PlotterBase import PlotterBase
+from CMGTools.BPH4L.plotting.PlotterBase import PlotterBase
 class MergedPlotter(PlotterBase):
 
     def __init__(self,plotters):

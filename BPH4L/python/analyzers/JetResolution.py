@@ -6,7 +6,7 @@ from PhysicsTools.HeppyCore.utils.deltar import *
 class JetResolution:
     def __init__(self,globalTag="",jetFlavour="",jerPath="" ,debug=False):
         """Create resolution and scalefactor objects to read the payloads from the text dumps from global tag under
-            CMGTools/XZZ2l2nu/data/jer  (provided from https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Fall15_25nsV2_MC).
+            CMGTools/BPH4L/data/jer  (provided from https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Fall15_25nsV2_MC).
            It will jet PtResolution and resolution scale factors for jets.
            Receipt from 
            https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyResolution
@@ -15,7 +15,7 @@ class JetResolution:
             
         self.globalTag = globalTag # "Summer15_25nsV6_DATA" or "Summer15_25nsV6_MC"
         self.jetFlavour = jetFlavour # "AK4PFchs" 
-        self.jerPath = jerPath #"%s/src/CMGTools/XZZ2l2nu/data/jer" % os.environ['CMSSW_BASE'];
+        self.jerPath = jerPath #"%s/src/CMGTools/BPH4L/data/jer" % os.environ['CMSSW_BASE'];
         path = os.path.expandvars(jerPath) 
         self.debug = debug
         if self.debug:

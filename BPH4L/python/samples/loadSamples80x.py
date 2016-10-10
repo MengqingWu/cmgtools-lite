@@ -6,13 +6,13 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
 # Load backgrounds
-from CMGTools.XZZ2l2nu.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+from CMGTools.BPH4L.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 # Load signals
-from CMGTools.XZZ2l2nu.samples.samples_13TeV_signal80X import *
+#from CMGTools.BPH4L.samples.samples_13TeV_signal80X import *
 # Load Data 
-from CMGTools.XZZ2l2nu.samples.samples_13TeV_DATA2016 import *
+from CMGTools.BPH4L.samples.samples_13TeV_DATA2016 import *
 # Load triggers
-from CMGTools.XZZ2l2nu.samples.triggers_13TeV_Spring16 import *
+from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 
 
 # backgrounds
@@ -25,21 +25,21 @@ signalSamples = []
 mcSamples = signalSamples + backgroundSamples
 
 # data
-MuOnia=[#MuOnia_Run2016B_Promptv1,
-        MuOnia_Run2016B_Promptv2,
-        MuOnia_Run2016C_Promptv2,
-        MuOnia_Run2016D_Promptv2,
-        MuOnia_Run2016E_Promptv2,
-        MuOnia_Run2016F_Promptv1,
-        MuOnia_Run2016G_Promptv1,
+MuOnia=[#MuOnia_Run2016B_PromptV1,
+        MuOnia_Run2016B_PromptV2,
+        MuOnia_Run2016C_PromptV2,
+        MuOnia_Run2016D_PromptV2,
+        MuOnia_Run2016E_PromptV2,
+        MuOnia_Run2016F_PromptV1,
+        MuOnia_Run2016G_PromptV1,
 ]
-Charmonium=[#Charmonium_Run2016B_Promptv1,
-            Charmonium_Run2016B_Promptv2,
-            Charmonium_Run2016C_Promptv2,
-            Charmonium_Run2016D_Promptv2,
-            Charmonium_Run2016E_Promptv2,
-            Charmonium_Run2016F_Promptv1,
-            Charmonium_Run2016G_Promptv1,
+Charmonium=[#Charmonium_Run2016B_PromptV1,
+            Charmonium_Run2016B_PromptV2,
+            Charmonium_Run2016C_PromptV2,
+            Charmonium_Run2016D_PromptV2,
+            Charmonium_Run2016E_PromptV2,
+            Charmonium_Run2016F_PromptV1,
+            Charmonium_Run2016G_PromptV1,
 ]
 
 for s in MuOnia:
@@ -55,7 +55,7 @@ for s in Charmonium:
 dataSamples = MuOnia + Charmonium
 
 # JSON
-jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/'
+jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/'
 
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt'
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt'
@@ -73,8 +73,8 @@ run_range = (273013, 276811)
 jsonFile = jsonDir + goldenJson
 
 
-from CMGTools.XZZ2l2nu.setup.Efficiencies import *
-dataDir = "$CMSSW_BASE/src/CMGTools/XZZ2l2nu/data"
+from CMGTools.BPH4L.setup.Efficiencies import *
+dataDir = "$CMSSW_BASE/src/CMGTools/BPH4L/data"
 
 for comp in mcSamples:
     comp.isMC = True

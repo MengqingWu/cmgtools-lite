@@ -2,7 +2,7 @@ from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNump
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 #from ROOT import TriggerBitChecker
 from PhysicsTools.Heppy.analyzers.core.autovars import *
-from CMGTools.XZZ2l2nu.analyzers.autophobj  import *
+from CMGTools.BPH4L.analyzers.autophobj  import *
 
 
 class AutoFillTreeProducer( TreeAnalyzerNumpy ):
