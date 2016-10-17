@@ -2,6 +2,6 @@
 
 namespace {
   namespace {
-    QuadObjFactory recoilCorrector;
+    QuadObjFactory quadFactory;
   }
 }

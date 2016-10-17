@@ -5,7 +5,10 @@
 #include <vector>
 #include <sstream>
 #include <string>
-#include <utility>
+#include <utility> // for std::pair
+
+#include "TMath.h"
+
 #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicTree.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 #include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
@@ -14,6 +17,7 @@
 #include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
 #include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
 #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+#include "DataFormats/MuonReco/interface/Muon.h"
 //
 // ** apply 4-mu common vertex combination **
 // 
@@ -31,6 +35,7 @@ using namespace reco;
 
 class QuadObjFactory
 {
+  bool isbad4Mu;
   
 public:
   QuadObjFactory() { /* empty constructor only for ROOT dictionaries */ }
@@ -43,7 +48,7 @@ public:
   RefCountedKinematicTree diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, const MagneticField* field, std::pair <double, double> & diMu_mass_err2);
   
 protected:
-
+  float get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4, const MagneticField* field);
 };
 
 

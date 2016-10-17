@@ -1,4 +1,3 @@
-import ROOT
 import random
 import math
 from  itertools import combinations, product
@@ -7,6 +6,10 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.HeppyCore.utils.deltar import *
 import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.BPH4L.tools.Pair import *
+
+from ROOT import gSystem
+
+gSystem.Load("libCMGToolsBPH4L")
 
 
 class BPH4lLepCombMaker( Analyzer ):

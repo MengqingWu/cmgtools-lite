@@ -1,12 +1,13 @@
 #include "CMGTools/BPH4L/interface/QuadObjFactory.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicTree.h"
-#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
-#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
-#include "DataFormats/TrackReco/interface/Track.h"
-#include "MagneticField/Engine/interface/MagneticField.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+// #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicTree.h"
+// #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
+// #include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+// #include "DataFormats/TrackReco/interface/Track.h"
+// #include "MagneticField/Engine/interface/MagneticField.h"
+// #include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
+// #include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
+// #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+// #include "DataFormats/MuonReco/interface/Muon.h"
 
 /*
 Based on algorithms on (associated to BPH-14-006)
@@ -38,6 +39,22 @@ QuadObjFactory::~QuadObjFactory() {
 //-----------------------------------------------------------------------------------------------------------------------------------------
 // RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(){  
 // }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4, const MagneticField* field){
+  /*
+    get chi2 test p value -> 1-p_cdf;
+    discriminant used to select the 0-charged 4-mu system.
+   */
+  RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), field);
+
+  float vtxProb = TMath::Prob(fitTree->currentDecayVertex()->chiSquared(),int(fitTree->currentDecayVertex()->degreesOfFreedom()));
+  return vtxProb;
+
+}
 //-----------------------------------------------------------------------------------------------------------------------------------------
 RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4, const MagneticField* field) {
   std::cout<<"I want a try"<<std::endl;
