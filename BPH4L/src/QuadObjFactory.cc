@@ -8,6 +8,15 @@
 #include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
 #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
 
+/*
+Based on algorithms on (associated to BPH-14-006)
+https://twiki.cern.ch/twiki/bin/view/CMS/FourMuPassTwo
+ */
+//                                                                                                                                                          
+//  Author:  Mengqing Wu                                                                                                                       
+// Created:  Mon, 17 Oct 2016
+//  
+
 //-----------------------------------------------------------------------------------------------------------------------------------------
 QuadObjFactory::QuadObjFactory(string iName) {
 
@@ -30,13 +39,13 @@ QuadObjFactory::~QuadObjFactory() {
 // RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(){  
 // }
 //-----------------------------------------------------------------------------------------------------------------------------------------
-RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTk1, const reco::Track & muTk2, const reco::Track & muTk3, const reco::Track & muTk4, const MagneticField* field) {
+RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4, const MagneticField* field) {
   std::cout<<"I want a try"<<std::endl;
   // Get The four-muon information
-  TransientTrack muon1TT(muTk1, field);
-  TransientTrack muon2TT(muTk2, field);
-  TransientTrack muon3TT(muTk3, field);
-  TransientTrack muon4TT(muTk4, field);
+  TransientTrack muon1TT(muTrk1, field);
+  TransientTrack muon2TT(muTrk2, field);
+  TransientTrack muon3TT(muTrk3, field);
+  TransientTrack muon4TT(muTrk4, field);
 
   KinematicParticleFactoryFromTransientTrack  pFactory;
 
@@ -60,8 +69,36 @@ RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTk
 
   return myFourMuonVertexFitTree;
 }
-//-----------------------------------------------------------------------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+RefCountedKinematicTree QuadObjFactory::diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, const MagneticField* field, std::pair <double, double> & diMu_mass_err2){
+  // The mass of a muon and the insignificant mass sigma
+  // to avoid singularities in the covariance matrix.
+  ParticleMass muon_mass = 0.10565837;    // pdg mass
+  float muon_sigma = muon_mass * 1.e-6;
+
+  // initial chi2 and ndf before kinematic fits.
+  float chi = 0.;
+  float ndf = 0.;
+  TransientTrack muonPTT(muTrk1, field);
+  TransientTrack muonMTT(muTrk2, field);
+  
+  KinematicParticleFactoryFromTransientTrack pmumuFactory;
+  vector < RefCountedKinematicParticle > muonParticles;
+  muonParticles.push_back(pmumuFactory.particle(muonPTT, muon_mass, chi, ndf, muon_sigma));
+  muonParticles.push_back(pmumuFactory.particle(muonMTT, muon_mass, chi, ndf, muon_sigma));
+
+  KinematicParticleVertexFitter fitter;
+  RefCountedKinematicTree diMuVertexFitTree;
+  diMuVertexFitTree = fitter.fit(muonParticles);
+
+  if (diMuVertexFitTree->isValid()) {
+    diMuVertexFitTree->movePointerToTheTop();
+    RefCountedKinematicParticle diMu_vFit_noMC = diMuVertexFitTree->currentParticle();
+    diMu_mass_err2 = make_pair(diMu_vFit_noMC->currentState().mass(), diMu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6));
+  }
+  return diMuVertexFitTree;
+}
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
