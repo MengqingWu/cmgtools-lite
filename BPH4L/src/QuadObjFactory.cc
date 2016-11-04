@@ -8,6 +8,7 @@
 // #include "RecoVertex/KinematicFitPrimitives/interface/ParticleMass.h"
 // #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
 // #include "DataFormats/MuonReco/interface/Muon.h"
+//#include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
 
 /*
 Based on algorithms on (associated to BPH-14-006)
@@ -44,20 +45,36 @@ QuadObjFactory::~QuadObjFactory() {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4, const MagneticField* field){
+//float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4, const edm::EventSetup& eventSetup){
+float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4){
   /*
     get chi2 test p value -> 1-p_cdf;
     discriminant used to select the 0-charged 4-mu system.
    */
-  RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), field);
+  // ESHandle < MagneticField > bFieldHandle;
+  // eventSetup.get < IdealMagneticFieldRecord > ().get(bFieldHandle);
+  // RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), &(*bFieldHandle));
 
-  float vtxProb = TMath::Prob(fitTree->currentDecayVertex()->chiSquared(),int(fitTree->currentDecayVertex()->degreesOfFreedom()));
+  paramField = new OAEParametrizedMagneticField("3_8T");
+  RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), paramField);
+
+  float vtxProb = 1.;
+  if (!fitTree->isValid() || fitTree->isEmpty() ){
+    std::cout<<"== bad 4-mu vertex.. skip... == "<<std::endl;
+  }
+  else{
+    vtxProb = TMath::Prob(fitTree->currentDecayVertex()->chiSquared(),int(fitTree->currentDecayVertex()->degreesOfFreedom()));
+    std::cout<< "[debug] chi2 = " << fitTree->currentDecayVertex()->chiSquared()
+	     << ", dof = " << fitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
+  }
+  
   return vtxProb;
 
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4, const MagneticField* field) {
-  std::cout<<"I want a try"<<std::endl;
+  
+  // std::cout<<"I want a try"<<std::endl;
   // Get The four-muon information
   TransientTrack muon1TT(muTrk1, field);
   TransientTrack muon2TT(muTrk2, field);

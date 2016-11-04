@@ -1,6 +1,6 @@
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount
+from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
 from PhysicsTools.Heppy.analyzers.gen.all import *
 from PhysicsTools.HeppyCore.utils.deltar import *

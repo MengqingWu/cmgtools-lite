@@ -390,7 +390,7 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         # counters
         #self.n_el_passKin=0
         self.n_mu_passKin=0
-        #self.n_el_passId=0
+        self.n_el_passId=0
         self.n_mu_passId=0
         #self.n_el=0
         self.n_mu=0

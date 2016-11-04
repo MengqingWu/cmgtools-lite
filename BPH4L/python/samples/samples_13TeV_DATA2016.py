@@ -19,46 +19,46 @@ run_range = (273013, 276811)
 
 #DoubleMuon_Run2016B_PromptReco     = kreator.makeDataComponent("DoubleMuon_Run2016B_PromptReco"    , "/DoubleMuon/Run2016B-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016B_PromptV1 = kreator.makeDataComponent("MuOnia_Run2016B_PromptV1", "/MuOnia/Run2016C-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016B_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016B_PromptV1", "/Charmonium/Run2016B-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016B_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016B_PromptV1", "/Charmonium/Run2016B-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 ### ----------------------------- Run2016B PromptReco v2 ----------------------------------------
 
 #DoubleMuon_Run2016B_PromptReco_v2     = kreator.makeDataComponent("DoubleMuon_Run2016B_PromptReco_v2"    , "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016B_PromptV2 = kreator.makeDataComponent("MuOnia_Run2016B_PromptV2", "/MuOnia/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016B_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016B_PromptV2", "/Charmonium/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016B_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016B_PromptV2", "/Charmonium/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 ### ----------------------------- Run2016C PromptReco v2 ----------------------------------------
 
 #DoubleMuon_Run2016C_PromptReco_v2     = kreator.makeDataComponent("DoubleMuon_Run2016C_PromptReco_v2"    , "/DoubleMuon/Run2016C-PromptReco-v2/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016C_PromptV2 = kreator.makeDataComponent("MuOnia_Run2016C_PromptV2", "/MuOnia/Run2016C-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016C_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016C_PromptV2", "/Charmonium/Run2016C-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016C_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016C_PromptV2", "/Charmonium/Run2016C-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 ### ----------------------------- Run2016D PromptReco v2 ----------------------------------------
 
 #DoubleMuon_Run2016D_PromptReco_v2     = kreator.makeDataComponent("DoubleMuon_Run2016D_PromptReco_v2"    , "/DoubleMuon/Run2016D-PromptReco-v2/MINIAOD"    , "CMS", ".*root", json, run_range) 
 MuOnia_Run2016D_PromptV2 = kreator.makeDataComponent("MuOnia_Run2016D_PromptV2", "/MuOnia/Run2016D-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016D_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016D_PromptV2", "/Charmonium/Run2016D-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016D_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016D_PromptV2", "/Charmonium/Run2016D-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 
 ### ----------------------------- Run2016E PromptReco v2 ----------------------------------------
 
 #DoubleMuon_Run2016E_PromptReco_v2     = kreator.makeDataComponent("DoubleMuon_Run2016E_PromptReco_v2"    , "/DoubleMuon/Run2016E-PromptReco-v2/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016E_PromptV2 = kreator.makeDataComponent("MuOnia_Run2016E_PromptV2", "/MuOnia/Run2016E-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016E_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016E_PromptV2", "/Charmonium/Run2016E-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016E_PromptV2 = kreator.makeDataComponent("Charmonium_Run2016E_PromptV2", "/Charmonium/Run2016E-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 
 ### ----------------------------- Run2016F PromptReco v1 ----------------------------------------
 
 #DoubleMuon_Run2016F_PromptReco_v1     = kreator.makeDataComponent("DoubleMuon_Run2016F_PromptReco_v1"    , "/DoubleMuon/Run2016F-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016F_PromptV1 = kreator.makeDataComponent("MuOnia_Run2016F_PromptV1", "/MuOnia/Run2016F-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016F_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016F_PromptV1", "/Charmonium/Run2016F-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016F_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016F_PromptV1", "/Charmonium/Run2016F-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
 
 
 ### ----------------------------- Run2016G PromptReco v1 ----------------------------------------
 
 #DoubleMuon_Run2016G_PromptReco_v1     = kreator.makeDataComponent("DoubleMuon_Run2016G_PromptReco_v1"    , "/DoubleMuon/Run2016G-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
 MuOnia_Run2016G_PromptV1 = kreator.makeDataComponent("MuOnia_Run2016G_PromptV1", "/MuOnia/Run2016G-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range)
-Charmonium_Run2016G_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016G_PromptV1", "/Charmonium/Run2016G-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json)
+Charmonium_Run2016G_PromptV1 = kreator.makeDataComponent("Charmonium_Run2016G_PromptV1", "/Charmonium/Run2016G-PromptReco-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json,run_range=run_range)
 
 ### ----------------------------- summary ----------------------------------------
 
