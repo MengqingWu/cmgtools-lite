@@ -11,9 +11,11 @@ For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these ins
 
 #### Set up CMSSW and the base git
 
+ CMGTools-lite release for ICHEP 2016 (CMSSW 8_0_19) 
+
 ```
-cmsrel CMSSW_8_0_11
-cd CMSSW_8_0_11/src
+cmsrel CMSSW_8_0_19
+cd CMSSW_8_0_19/src
 cmsenv
 git cms-init
 ```

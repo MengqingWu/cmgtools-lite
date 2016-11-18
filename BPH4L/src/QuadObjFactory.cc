@@ -55,6 +55,7 @@ float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & m
   // eventSetup.get < IdealMagneticFieldRecord > ().get(bFieldHandle);
   // RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), &(*bFieldHandle));
 
+  // ParamField example see https://github.com/CERN-PH-CMG/cmgtools-lite/blob/80X/TTHAnalysis/src/SignedImpactParameter.cc#L39
   paramField = new OAEParametrizedMagneticField("3_8T");
   RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), paramField);
 

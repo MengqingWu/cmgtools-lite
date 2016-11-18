@@ -103,12 +103,11 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         count = self.counters.counter('events')
         count.register('all events')
         count.register('pass events')
-        count.register('pass 4mu evts')
-        count.register('pass 4mu Id(pre+soft) evts')
-        count.register('pass 4mu Id(pre+soft)+Kin(pt2.0,eta2.4) evts')
-        count.register('pass 4mu Id(pre) evts')
-        count.register('pass 4mu Id(soft) evts')
-        
+        count.register('pass >4mu evts')
+        count.register('pass >4mu Kin(pt2.0,eta2.4) evts')
+        count.register('pass >4mu Kin+Id(pre) evts')
+        count.register('pass >4mu Kin+Id(pre+soft) evts')
+            
         # count.register('pass 2mu events')
         # count.register('pass 2el events')
         # count.register('pass 2mu kin events')
@@ -151,48 +150,55 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         allelectrons = self.makeAllElectrons(event)
         #self.n_el= len(allelectrons)
         
-        # lepton ID (count and filter)
+        #--> lepton ID (count and filter)
+        n_mu_passKin=0
         n_mu_pre=0
         n_mu_soft=0
+
         for mu in allmuons:
-            if mu.preMuonID: n_mu_pre+=1
-            if mu.muonID("POG_ID_Soft"): n_mu_soft+=1
-            if (mu.preMuonID and mu.muonID("POG_ID_Soft")) or not self.applyID:
-                self.n_mu_passId += 1
-                minc=[i for i in allmuons if i != mu and (i.highPtID or i.trackerHighPtID ) and deltaR(mu.eta(),mu.phi(),i.eta(),i.phi())<0.3]
-                mu.nminc=len(minc)
-                for i in minc: 
-                    if i.physObj.innerTrack().isNonnull(): mu.trackerIso-=i.physObj.innerTrack().pt()
-                mu.trackerIso/=mu.pt()
-                #if mu.miniRelIso<0.2 or not self.applyIso:
-                #if mu.trackerIso<0.1 or not self.applyIso:
-                event.selectedLeptons.append(mu)
-                event.selectedMuons.append(mu)
-                #self.n_mu_passIso += 1
-            else:
-                event.otherLeptons.append(mu)
-        for ele in allelectrons:
-            #if ( (self.electronIDVersion=='HEEPv6' and ele.heepV60_noISO) or (self.electronIDVersion=='looseID' and ele.loose_nonISO)) or not self.applyID:
-            if  ele.loose_nonISO or not self.applyID:
-                self.n_el_passId += 1
-                #if ((self.electronIsoVersion=='miniISO' and ele.miniRelIso<0.1) or (self.electronIsoVersion=='pfISO' and ele.looseiso)) or not self.applyIso:
-                #if ele.looseiso or not self.applyIso:
-                event.selectedLeptons.append(ele)
-                event.selectedElectrons.append(ele)
-                #self.n_el_passIso += 1
-            else:
-                event.otherLeptons.append(ele)        
+            # trackerMuon only + lepton kin cuts to filter
+            # (Kin cuts only and not filter in 8_0_11)
+            if mu.physObj.isTrackerMuon() and mu.pt()>=2.0 and abs(mu.eta())<=2.4:
+                n_mu_passKin+=1
+                if mu.preMuonID:
+                    n_mu_pre+=1
+                    if mu.muonID("POG_ID_Soft"):
+                        n_mu_soft+=1
+
+                if (mu.preMuonID and mu.muonID("POG_ID_Soft")) or not self.applyID:
+                    event.selectedLeptons.append(mu)
+                    event.selectedMuons.append(mu)
+                
+                    ##--> not used, to be commented out: 
+                    minc=[i for i in allmuons if i != mu and (i.highPtID or i.trackerHighPtID ) and deltaR(mu.eta(),mu.phi(),i.eta(),i.phi())<0.3]
+                    mu.nminc=len(minc)
+                    for i in minc: 
+                        if i.physObj.innerTrack().isNonnull(): mu.trackerIso-=i.physObj.innerTrack().pt()
+                    mu.trackerIso/=mu.pt()
+                    ##--> 
+                    #if mu.miniRelIso<0.2 or not self.applyIso:
+                    #if mu.trackerIso<0.1 or not self.applyIso:
+                    #self.n_mu_passIso += 1
+                
+                else:
+                    event.otherLeptons.append(mu)
 
         self.n_mu_pre = n_mu_pre
         self.n_mu_soft = n_mu_soft
-
-        
-        # lepton kin cuts (only count but not filter)
-        n_mu_passKin=0
-        for mu in event.selectedMuons:
-            if mu.pt()>=2.0 and abs(mu.eta())<=2.4:
-                n_mu_passKin+=1                
         self.n_mu_passKin = n_mu_passKin
+        
+        # for ele in allelectrons:
+        #     #if ( (self.electronIDVersion=='HEEPv6' and ele.heepV60_noISO) or (self.electronIDVersion=='looseID' and ele.loose_nonISO)) or not self.applyID:
+        #     if  ele.loose_nonISO or not self.applyID:
+        #         self.n_el_passId += 1
+        #         #if ((self.electronIsoVersion=='miniISO' and ele.miniRelIso<0.1) or (self.electronIsoVersion=='pfISO' and ele.looseiso)) or not self.applyIso:
+        #         #if ele.looseiso or not self.applyIso:
+        #         event.selectedLeptons.append(ele)
+        #         event.selectedElectrons.append(ele)
+        #         #self.n_el_passIso += 1
+        #     else:
+        #         event.otherLeptons.append(ele)       
+                
         
         # Sort output leptons pt:
         event.otherLeptons.sort(key = lambda l : l.pt(), reverse = True)
@@ -388,12 +394,8 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         self.counters.counter('events').inc('all events')
 
         # counters
-        #self.n_el_passKin=0
-        self.n_mu_passKin=0
-        self.n_el_passId=0
-        self.n_mu_passId=0
-        #self.n_el=0
         self.n_mu=0
+        self.n_mu_passKin=0
         self.n_mu_pre = 0
         self.n_mu_soft = 0
         
@@ -401,15 +403,13 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         self.makeLeptons(event)
 
         if self.n_mu>=4:
-            self.counters.counter('events').inc('pass 4mu evts')
-        if self.n_mu_pre>=4:
-            self.counters.counter('events').inc('pass 4mu Id(pre) evts')
-        if self.n_mu_soft>=4:
-            self.counters.counter('events').inc('pass 4mu Id(soft) evts')
-        if self.n_mu_passId>=4:
-            self.counters.counter('events').inc('pass 4mu Id(pre+soft) evts')
+            self.counters.counter('events').inc('pass >4mu evts')
         if self.n_mu_passKin>=4:
-            self.counters.counter('events').inc('pass 4mu Id(pre+soft)+Kin(pt2.0,eta2.4) evts')
+            self.counters.counter('events').inc('pass >4mu Kin(pt2.0,eta2.4) evts')
+        if self.n_mu_pre>=4:
+            self.counters.counter('events').inc('pass >4mu Kin+Id(pre) evts')
+        if self.n_mu_soft>=4:
+            self.counters.counter('events').inc('pass >4mu Kin+Id(pre+soft) evts')
 
         if self.do_filter:
             #if len(event.selectedMuons)>=2 or len(event.selectedElectrons)>=2 :
