@@ -33,10 +33,10 @@ MuonTreeProducer = cfg.Analyzer(
          #"LL"  : NTupleCollection("Zll",LLType,5, help="Z to ll"),
          #"ElMu" : NTupleCollection("elmu",LLType,5, help="electron - muon pair for non-resonant bkg"),
          #"selectedLeptons" : NTupleCollection("lep",leptonTypeExtra, 10, help="selected leptons"),
-         "selectedMuons" : NTupleCollection("mu",MuonType, 10, help="selected Muons"),
+         "selectedMuons" : NTupleCollection("mu", MuonType, 10, help="selected Muons"),
          "MuFour"        : NTupleCollection("mu4", MuFourType, 5, help="4-mu combination"),
          #"genLeptons" : NTupleCollection("genLep", genParticleType, 10, help="Generated leptons (e/mu) from W/Z decays"),
-         "jets_raw"   : NTupleCollection("jet",jetType,15, help="all jets from miniAOD"),
+         "jets_raw"   : NTupleCollection("jet", jetType,15, help="all jets from miniAOD"),
      }
 )
 

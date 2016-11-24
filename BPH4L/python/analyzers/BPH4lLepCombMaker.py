@@ -61,10 +61,8 @@ class BPH4lLepCombMaker( Analyzer ):
 
                 quad=Quad(l1,l2,l3,l4)
                 self.QuadObjFactory.set4muVtx(l1.physObj,l2.physObj,l3.physObj,l4.physObj)
-                vtxProb = self.QuadObjFactory.get4muVtxProb()
-                vtxChi2 = self.QuadObjFactory.get4muVtxChi2()
-                setattr(quad, 'vtxProb', vtxProb)
-                setattr(quad, 'vtxChi2', vtxChi2)
+                setattr(quad, 'vtxProb', self.QuadObjFactory.get4muVtxProb())
+                setattr(quad, 'vtxChi2', self.QuadObjFactory.get4muVtxChi2())
                 print " Chi2 test for 4-mu common vertex: ", quad.vtxProb
                 
                 lepP=[]
@@ -73,19 +71,30 @@ class BPH4lLepCombMaker( Analyzer ):
                     if i.charge()>0: lepP.append(i)
                     elif i.charge()<0: lepN.append(i)
                     else: print "== weird mu with 0 charge == "
-                pair1 = Pair( Pair(lepP[0], lepN[0]), Pair(lepP[1], lepN[1]) )
-                pair2 = Pair( Pair(lepP[0], lepN[1]), Pair(lepP[1], lepN[0]) )
 
+                _1a = Pair(lepP[0], lepN[0])
+                _1b = Pair(lepP[1], lepN[1])
+                _2a = Pair(lepP[0], lepN[1])
+                _2b = Pair(lepP[1], lepN[0])
+                
+                for subp in [_1a, _1b, _2a, _2b]:
+                    self.QuadObjFactory.set2muVtx(subp.leg1.physObj, subp.leg2.physObj)
+                    setattr(subp, 'vtxProb', self.QuadObjFactory.get2muVtxProb())
+                    setattr(subp, 'vtxChi2', self.QuadObjFactory.get2muVtxChi2())
+                    setattr(subp, 'fitMass', self.QuadObjFactory.get2muMass())
+                    setattr(subp, 'fitMassErr2', self.QuadObjFactory.get2muMassErr2())
+                        
                 if self.printalot: # debug:
                     #print " [info] dR(1,2,12) = %.2f, %.2f, %.2f " % (pair1.deltaR(), pair2.deltaR(), pair12.deltaR())
-                    print " [info] dR(1p, 2p)  = %.2f, %.2f " % (pair1.leg1.deltaR(), pair1.leg2.deltaR())
+                    print " [info] dR(1p, 2p)  = %.2f, %.2f " % (_1a.deltaR(), _1b.deltaR())
                     print "        dz(1,2,3,4) = %.2f, %.2f, %.2f. %.2f " % (l1.physObj.track().dz(l1.associatedVertex.position()), l2.physObj.track().dz(l2.associatedVertex.position()), l3.physObj.track().dz(l3.associatedVertex.position()), l4.physObj.track().dz(l4.associatedVertex.position()))
                     print "        dxy(1,2,3,4)= %.2f, %.2f, %.2f, %.2f " % (l1.physObj.track().dxy(l1.associatedVertex.position()), l2.physObj.track().dxy(l2.associatedVertex.position()), l3.physObj.track().dxy(l3.associatedVertex.position()), l4.physObj.track().dxy(l4.associatedVertex.position()))
 
 
                 MuFour.append({'quad': quad,
-                               'pair1': pair1,
-                               'pair2': pair2})
+                               'pair1': (_1a, _1b),
+                               'pair2': (_2a, _2b),
+                })
                 self.n_pass_MuFour += 1             
 
             else: # non-zero charged 4-mu, skipped

@@ -60,3 +60,61 @@ git push -u origin 80X
 cd $CMSSW_BASE/src
 scram b -j 8
 ```
+
+
+Instruction to run jobs 
+---------------------------------
+0. grid proxy init:
+   
+  Please always initialize your grid proxy for both locally run single job or on LSF for batch jobs in order to access reomote input datasets through AAA (xrootd) service:
+
+  ```
+  voms-proxy-init --voms cms --hours 172 --valid 172:00
+  ```
+
+1. run single job interactively
+
+ Example configuration files are in cfg/ folder, e.g.
+  
+  ```
+  heppy mc_test run_xzz2l2nu_80x_cfg_loose_mc.py
+  ```
+ this will run config file run_xzz2l2nu_80x_cfg_loose_mc.py and output to directory mc_test
+
+ N.B. 
+  There are many options to pass to the main function of Heppy,
+  one useful example is to run few (e.g. 100) events test:
+  ```
+  heppy mc_test run_xzz2l2nu_80x_cfg_loose_mc.py -N 100
+  ```
+  you will have the first 100 events processed only.
+
+2. run batch jobs on lsf
+
+  Example scripts to submit lsf batch jobs are:
+  ```
+    cfg/loose_lsf_dt/sub_xzz2l2nu_80x_cfg_loose_dt.sh 
+    cfg/loose_lsf_mc/sub_xzz2l2nu_80x_cfg_loose_mc.sh 
+  ```
+  for data and mc respectively.
+
+  LSF jobs can only be submitted on lxplus, your local machine doesn't work. 
+
+  One can then go to the output directory ('LSF/' in above example) to check the status:
+  ```
+   heppy_check.py *
+  ```
+
+  If you see some jobs are finished but not showing the results here, you can resub the jobs by running:
+  ```
+   heppy_check.py * -b 'bsub -q 8nh'
+  ```
+  which will resub the jobs with missing outputs.
+
+  Once the jobs are all done, you can merge the outputs by running:
+  ```
+   heppy_hadd.py .
+  ```
+  this will collect all "Chunk"s of one sample and merge them into one folder.
+
+

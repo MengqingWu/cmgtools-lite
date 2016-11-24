@@ -12,8 +12,10 @@ QuadType =  NTupleObjectType("QuadType", baseObjectTypes=[fourVectorType], varia
 ])
 
 DuoType = NTupleObjectType("DuoType", baseObjectTypes=[fourVectorType], variables = [
-    #NTupleVariable("vtxProb",   lambda x : x.vtxProb, float),
-    #NTupleVariable("vtxChi2",   lambda x : x.vtxChi2, float),
+    NTupleVariable("vtxProb",   lambda x : x.vtxProb, float),
+    NTupleVariable("vtxChi2",   lambda x : x.vtxChi2, float),
+    NTupleVariable("fitMass",   lambda x : x.fitMass, float),
+    NTupleVariable("fitMassErr2",   lambda x : x.fitMassErr2, float),
     NTupleVariable("l1_index",  lambda x : x.leg1.index, int),
     NTupleVariable("l2_index",  lambda x : x.leg2.index, int),
     NTupleVariable("deltaPhi",  lambda x : x.deltaPhi(), float),       
@@ -23,8 +25,10 @@ DuoType = NTupleObjectType("DuoType", baseObjectTypes=[fourVectorType], variable
 
 MuFourType =  NTupleObjectType("VVType", baseObjectTypes=[], variables = [
     NTupleSubObject("quad",  lambda x : x['quad'], QuadType),
-    NTupleSubObject("1a",  lambda x : x['pair1'].leg1, DuoType),
-    NTupleSubObject("1b",  lambda x : x['pair1'].leg2, DuoType),
+    NTupleSubObject("1a",  lambda x : x['pair1'][0], DuoType),
+    NTupleSubObject("1b",  lambda x : x['pair1'][1], DuoType),
+    NTupleSubObject("2a",  lambda x : x['pair2'][0], DuoType),
+    NTupleSubObject("2b",  lambda x : x['pair2'][1], DuoType),
 ])
 
 #****

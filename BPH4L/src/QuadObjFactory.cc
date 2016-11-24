@@ -57,7 +57,8 @@ float QuadObjFactory::get4muVtxProb(){
   }
   else{
     vtxProb = TMath::Prob(_4muFitTree->currentDecayVertex()->chiSquared(),int(_4muFitTree->currentDecayVertex()->degreesOfFreedom()));
-    std::cout<< "[debug] chi2 = " << _4muFitTree->currentDecayVertex()->chiSquared()
+    std::cout<< "[debug] 4-mu p-value = " << vtxProb
+	     << ", chi2 = " << _4muFitTree->currentDecayVertex()->chiSquared()
 	     << ", dof = " << _4muFitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
   }
 
@@ -129,7 +130,8 @@ float QuadObjFactory::get2muVtxProb(){
   }
   else{
     _2vtxProb = TMath::Prob(_2muFitTree->currentDecayVertex()->chiSquared(),int(_2muFitTree->currentDecayVertex()->degreesOfFreedom()));
-    std::cout<< "[debug] di-mu chi2 = " << _2muFitTree->currentDecayVertex()->chiSquared()
+    std::cout<< "[debug] di-mu p-value = " << _2vtxProb
+	     << ", chi2 = " << _2muFitTree->currentDecayVertex()->chiSquared()
 	     << ", dof = " << _2muFitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
   }
 

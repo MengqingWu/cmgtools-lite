@@ -49,10 +49,11 @@ class QuadObjFactory
   //void addMCFile  (std::string iNameMC);
   //RefCountedKinematicTree fourMuon_vertex();
   void set4muVtx(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4);
-  void set2muVtx(const reco::Muon & mu1, const reco::Muon & mu2);
   
   float get4muVtxProb();
   float get4muVtxChi2();
+
+  void set2muVtx(const reco::Muon & mu1, const reco::Muon & mu2);
 
   float get2muVtxProb();
   float get2muVtxChi2();
