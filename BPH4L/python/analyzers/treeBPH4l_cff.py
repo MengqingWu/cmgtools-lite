@@ -16,8 +16,8 @@ leptonSkimmer = cfg.Analyzer(
     required = ['inclusiveLeptons']
 )
 
-fullTreeProducer = cfg.Analyzer(
-     AutoFillTreeProducer, name='fullTreeProducer',
+MuonTreeProducer = cfg.Analyzer(
+     AutoFillTreeProducer, name='MuonTreeProducer',
      vectorTree = True,
      saveTLorentzVectors = True,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
@@ -32,7 +32,9 @@ fullTreeProducer = cfg.Analyzer(
      collections = {
          #"LL"  : NTupleCollection("Zll",LLType,5, help="Z to ll"),
          #"ElMu" : NTupleCollection("elmu",LLType,5, help="electron - muon pair for non-resonant bkg"),
-         "selectedLeptons" : NTupleCollection("lep",leptonTypeExtra, 10, help="selected leptons"),
+         #"selectedLeptons" : NTupleCollection("lep",leptonTypeExtra, 10, help="selected leptons"),
+         "selectedMuons" : NTupleCollection("mu",MuonType, 10, help="selected Muons"),
+         "MuFour"        : NTupleCollection("mu4", MuFourType, 5, help="4-mu combination"),
          #"genLeptons" : NTupleCollection("genLep", genParticleType, 10, help="Generated leptons (e/mu) from W/Z decays"),
          "jets_raw"   : NTupleCollection("jet",jetType,15, help="all jets from miniAOD"),
      }

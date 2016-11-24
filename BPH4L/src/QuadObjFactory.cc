@@ -14,39 +14,34 @@
 Based on algorithms on (associated to BPH-14-006)
 https://twiki.cern.ch/twiki/bin/view/CMS/FourMuPassTwo
  */
-//                                                                                                                                                          
+//  Code based on RootTools/interface/RecoilCorrector.h
 //  Author:  Mengqing Wu                                                                                                                       
 // Created:  Mon, 17 Oct 2016
 //  
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-QuadObjFactory::QuadObjFactory(string iName) {
-
-//   fRandom = new TRandom3(iSeed);
-
-//   // get fits for Z data
-//   readRecoil(fF1U1Fit,fF1U1RMSSMFit,fF1U1RMS1Fit,fF1U1RMS2Fit,fF1U2Fit,fF1U2RMSSMFit,fF1U2RMS1Fit,fF1U2RMS2Fit,iNameZDat,iPrefix);
-//   if(iPrefix == "PF") readCorr  (iNameZDat,fF1U1U2Corr,fF2U1U2Corr,fF1F2U1Corr,fF1F2U2Corr,fF1F2U1U2Corr,fF1F2U2U1Corr,0);
-//   if(iPrefix == "TK") readCorr  (iNameZDat,fF1U1U2Corr,fF2U1U2Corr,fF1F2U1Corr,fF1F2U2Corr,fF1F2U1U2Corr,fF1F2U2U1Corr,1);  
-//   fId = 0; fJet = 0;
-}
-
-QuadObjFactory::~QuadObjFactory() {
-
-  //delete fRandom;
+QuadObjFactory::QuadObjFactory() {
+  
+  // ParamField example see https://github.com/CERN-PH-CMG/cmgtools-lite/blob/80X/TTHAnalysis/src/SignedImpactParameter.cc#L39
+  paramField = new OAEParametrizedMagneticField("3_8T");
   
 }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
-// RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(){  
-// }
+QuadObjFactory::~QuadObjFactory() {
+  delete paramField;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+void QuadObjFactory::set4muVtx(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4){
+  _4muFitTree = fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track());
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 //float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4, const edm::EventSetup& eventSetup){
-float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4){
+float QuadObjFactory::get4muVtxProb(){
   /*
     get chi2 test p value -> 1-p_cdf;
     discriminant used to select the 0-charged 4-mu system.
@@ -55,32 +50,41 @@ float QuadObjFactory::get4muVtxProb(const reco::Muon & mu1, const reco::Muon & m
   // eventSetup.get < IdealMagneticFieldRecord > ().get(bFieldHandle);
   // RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), &(*bFieldHandle));
 
-  // ParamField example see https://github.com/CERN-PH-CMG/cmgtools-lite/blob/80X/TTHAnalysis/src/SignedImpactParameter.cc#L39
-  paramField = new OAEParametrizedMagneticField("3_8T");
-  RefCountedKinematicTree fitTree=fourMuon_vertex(*mu1.track(), *mu2.track(), *mu3.track(), *mu4.track(), paramField);
 
-  float vtxProb = 1.;
-  if (!fitTree->isValid() || fitTree->isEmpty() ){
+  float vtxProb = -99.;
+  if (!_4muFitTree->isValid() || _4muFitTree->isEmpty() ){
     std::cout<<"== bad 4-mu vertex.. skip... == "<<std::endl;
   }
   else{
-    vtxProb = TMath::Prob(fitTree->currentDecayVertex()->chiSquared(),int(fitTree->currentDecayVertex()->degreesOfFreedom()));
-    std::cout<< "[debug] chi2 = " << fitTree->currentDecayVertex()->chiSquared()
-	     << ", dof = " << fitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
+    vtxProb = TMath::Prob(_4muFitTree->currentDecayVertex()->chiSquared(),int(_4muFitTree->currentDecayVertex()->degreesOfFreedom()));
+    std::cout<< "[debug] chi2 = " << _4muFitTree->currentDecayVertex()->chiSquared()
+	     << ", dof = " << _4muFitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
   }
-  
-  return vtxProb;
 
+  return vtxProb;
 }
+
+float QuadObjFactory::get4muVtxChi2() {
+  float vtxChi2 = -99.;
+   if (!_4muFitTree->isValid() || _4muFitTree->isEmpty() ){
+    std::cout<<"== bad 4-mu vertex.. skip... == "<<std::endl;
+  }
+  else{
+    vtxChi2 = _4muFitTree->currentDecayVertex()->chiSquared();
+  }
+   
+  return vtxChi2;
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------
-RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4, const MagneticField* field) {
+RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4) {
   
   // std::cout<<"I want a try"<<std::endl;
   // Get The four-muon information
-  TransientTrack muon1TT(muTrk1, field);
-  TransientTrack muon2TT(muTrk2, field);
-  TransientTrack muon3TT(muTrk3, field);
-  TransientTrack muon4TT(muTrk4, field);
+  TransientTrack muon1TT(muTrk1, paramField);
+  TransientTrack muon2TT(muTrk2, paramField);
+  TransientTrack muon3TT(muTrk3, paramField);
+  TransientTrack muon4TT(muTrk4, paramField);
 
   KinematicParticleFactoryFromTransientTrack  pFactory;
 
@@ -106,7 +110,48 @@ RefCountedKinematicTree QuadObjFactory::fourMuon_vertex(const reco::Track & muTr
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-RefCountedKinematicTree QuadObjFactory::diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, const MagneticField* field, std::pair <double, double> & diMu_mass_err2){
+
+void QuadObjFactory::set2muVtx(const reco::Muon & mu1, const reco::Muon & mu2){
+  _diMu_mass_err2 = make_pair(-1,-1);
+  _2muFitTree = diMuon_vertex(*mu1.track(), *mu2.track(), _diMu_mass_err2);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+float QuadObjFactory::get2muVtxProb(){
+  /*
+    get chi2 test p value -> 1-p_cdf;
+    discriminant used to select the 0-charged 2-mu system.
+   */
+
+  float _2vtxProb = -99.;
+  if (!_2muFitTree->isValid() || _2muFitTree->isEmpty() ){
+    std::cout<<"== bad 2-mu vertex.. skip... == "<<std::endl;
+  }
+  else{
+    _2vtxProb = TMath::Prob(_2muFitTree->currentDecayVertex()->chiSquared(),int(_2muFitTree->currentDecayVertex()->degreesOfFreedom()));
+    std::cout<< "[debug] di-mu chi2 = " << _2muFitTree->currentDecayVertex()->chiSquared()
+	     << ", dof = " << _2muFitTree->currentDecayVertex()->degreesOfFreedom() <<std::endl;
+  }
+
+  return _2vtxProb;
+}
+
+float QuadObjFactory::get2muVtxChi2() {
+  float _2vtxChi2 = -99.;
+   if (!_2muFitTree->isValid() || _2muFitTree->isEmpty() ){
+    std::cout<<"== bad 2-mu vertex.. skip... == "<<std::endl;
+  }
+  else{
+    _2vtxChi2 = _2muFitTree->currentDecayVertex()->chiSquared();
+  }
+   
+  return _2vtxChi2;
+}
+
+float QuadObjFactory::get2muMass() {return _diMu_mass_err2.first; }
+float QuadObjFactory::get2muMassErr2() {return _diMu_mass_err2.second; }
+//-----------------------------------------------------------------------------------------------------------------------------------------
+RefCountedKinematicTree QuadObjFactory::diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, std::pair <float, float> & diMu_mass_err2){
   // The mass of a muon and the insignificant mass sigma
   // to avoid singularities in the covariance matrix.
   ParticleMass muon_mass = 0.10565837;    // pdg mass
@@ -115,8 +160,8 @@ RefCountedKinematicTree QuadObjFactory::diMuon_vertex(const reco::Track & muTrk1
   // initial chi2 and ndf before kinematic fits.
   float chi = 0.;
   float ndf = 0.;
-  TransientTrack muonPTT(muTrk1, field);
-  TransientTrack muonMTT(muTrk2, field);
+  TransientTrack muonPTT(muTrk1, paramField);
+  TransientTrack muonMTT(muTrk2, paramField);
   
   KinematicParticleFactoryFromTransientTrack pmumuFactory;
   vector < RefCountedKinematicParticle > muonParticles;

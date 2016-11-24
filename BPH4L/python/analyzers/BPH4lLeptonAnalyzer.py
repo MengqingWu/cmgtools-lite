@@ -12,6 +12,8 @@ from PhysicsTools.HeppyCore.utils.deltar import *
 from PhysicsTools.Heppy.physicsutils.genutils import *
 import ROOT
 
+from  itertools import combinations
+
 from ROOT import heppy
 cmgMuonCleanerBySegments = heppy.CMGMuonCleanerBySegmentsAlgo()
 
@@ -22,7 +24,8 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         super(BPH4lLeptonAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
 
         self.muonUseTuneP = self.cfg_ana.muonUseTuneP if hasattr(self.cfg_ana,'muonUseTuneP') else False
-
+        self.printalot = False # to print a lot debug info
+        
         if self.cfg_ana.doMuonScaleCorrections:
             algo, options = self.cfg_ana.doMuonScaleCorrections
             # if algo == "Kalman":
@@ -245,7 +248,7 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         # Attach the vertex to them, for dxy/dz calculation
         for mu in allmuons:
             mu.associatedVertex = event.goodVertices[0] if hasattr(event,"goodVertices") and len(event.goodVertices)>0 else event.vertices[0]
-
+            
         # define muon id
         for mu in allmuons:
             mu.highPtID = mu.physObj.isHighPtMuon(mu.associatedVertex)
@@ -266,6 +269,26 @@ class BPH4lLeptonAnalyzer( Analyzer ):
                            and mu.physObj.innerTrack().hitPattern().numberOfValidStripHits()>2 \
                            and mu.physObj.innerTrack().normalizedChi2()<15 \
                            and abs(mu.physObj.innerTrack().dxy(mu.associatedVertex.position()))<10.
+
+        ##  Dimuon selectors (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideTrackerMuons#Dimuon_selectors)
+        ##  segment-based overlap removal:
+        removeOverlaps = False # TBD: change this switch to global
+        for mu in allmuons:
+            mu.index = allmuons.index(mu)
+            mu.isOverlap = 0
+            
+        for mu1, mu2 in combinations(allmuons, 2):
+            overlapped = ROOT.muon.overlap(mu1.physObj, mu2.physObj)
+            if overlapped:
+                mu1.isOverlap = mu2.isOverlap = 1
+            if self.printalot:
+                isoverlap = 'Yes' if overlapped else 'No'
+                print '[event = %d] (mu1, mu2) = (%d, %d), overlap? %s' % (event.input.eventAuxiliary().id().event(), mu1.index, mu2.index, isoverlap)
+            if removeOverlaps:
+                ## FIXME: the logic to mark the overlap (Nov22, 2016)
+                del allmuons[mu1.index]
+                del allmuons[mu2.index]
+                
             
         return allmuons
 

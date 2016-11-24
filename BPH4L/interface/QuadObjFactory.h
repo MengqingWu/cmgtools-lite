@@ -29,7 +29,7 @@
 Based on algorithms on (associated to BPH-14-006)
 https://twiki.cern.ch/twiki/bin/view/CMS/FourMuPassTwo
  */
-//                                                                                                                                                          
+//  Code based on RootTools/interface/RecoilCorrector.h
 //  Author:  Mengqing Wu                                                                                                                       
 // Created:  Mon, 17 Oct 2016
 //  
@@ -40,21 +40,35 @@ using namespace edm;
 
 class QuadObjFactory
 {
-  bool isbad4Mu;
-  OAEParametrizedMagneticField *paramField;
-  
-public:
-  QuadObjFactory() { /* empty constructor only for ROOT dictionaries */ }
-  QuadObjFactory(string iName);
+
+ public:
+  //QuadObjFactory() { /* empty constructor only for ROOT dictionaries */ }
+  QuadObjFactory();
   //QuadObjFactory(string iNameZDat1, string iPrefix, int iSeed=0xDEADBEEF);
   ~QuadObjFactory();
   //void addMCFile  (std::string iNameMC);
   //RefCountedKinematicTree fourMuon_vertex();
-  float get4muVtxProb(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4);
+  void set4muVtx(const reco::Muon & mu1, const reco::Muon & mu2, const reco::Muon & mu3, const reco::Muon & mu4);
+  void set2muVtx(const reco::Muon & mu1, const reco::Muon & mu2);
+  
+  float get4muVtxProb();
+  float get4muVtxChi2();
 
+  float get2muVtxProb();
+  float get2muVtxChi2();
+  float get2muMass();
+  float get2muMassErr2();
+
+ private:
+  //bool isbad4Mu;
+  OAEParametrizedMagneticField *paramField;
+  RefCountedKinematicTree _4muFitTree;
+  RefCountedKinematicTree _2muFitTree;
+  std::pair <float,float> _diMu_mass_err2;
+  
  protected:
-  RefCountedKinematicTree fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4, const MagneticField* field);
-  RefCountedKinematicTree diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, const MagneticField* field, std::pair <double, double> & diMu_mass_err2);
+  RefCountedKinematicTree fourMuon_vertex(const reco::Track & muTrk1, const reco::Track & muTrk2, const reco::Track & muTrk3, const reco::Track & muTrk4);
+  RefCountedKinematicTree diMuon_vertex(const reco::Track & muTrk1,  const reco::Track &  muTrk2, std::pair <float, float> & diMu_mass_err2);
  
 };
 

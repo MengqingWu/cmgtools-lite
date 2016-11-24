@@ -62,6 +62,7 @@ weightsInfoType = NTupleObjectType("WeightsInfo", mcOnly=True, variables = [
 
 ### BASIC VERSION WITH ONLY MAIN LEPTON ID CRITERIA
 leptonType = NTupleObjectType("lepton", baseObjectTypes = [ particleType ], variables = [
+    NTupleVariable("index",   lambda x : x.index, int, help="lepton index in the miniAOD lepton container"),
     NTupleVariable("charge",   lambda x : x.charge(), int),
     NTupleVariable("hasgen",  lambda x : getattr(x,"hasgen",-1), int, help="has gen particle"),
     NTupleVariable("ptErr",  lambda x : x.ptErr() if abs(x.pdgId())==13 else -999, help="pt Error"),
@@ -157,6 +158,45 @@ leptonTypeExtra = NTupleObjectType("leptonExtra", baseObjectTypes = [ leptonType
 #    NTupleVariable("trigerob_eta", lambda x : x.triggerob.eta if hasattr(x,'triggerob') else -100, help="Electron matched HLT object eta"),
 #    NTupleVariable("trigerob_phi", lambda x : x.triggerob.phi if hasattr(x,'triggerob') else -100, help="Electron matched HLT object phi"),
 #    NTupleVariable("trigerob_deltaR", lambda x : x.triggerob.dR if hasattr(x,'triggerob') else -100, help="Electron matched HLT object phi"),
+])
+
+      
+##------------------------------------------  
+## Muon
+##------------------------------------------  
+  
+MuonType = NTupleObjectType("MuonType", baseObjectTypes = [ leptonType ], variables = [
+    # overlap removal targeted at low pt muons:
+    NTupleVariable("isOverlap",   lambda x : x.isOverlap, int, help="muons with close by (as defined by default) segements in the muon chambers"),
+
+    # Extra isolation variables
+    NTupleVariable("chargedHadRelIso03",  lambda x : x.chargedHadronIsoR(0.3)/x.pt(), help="PF Rel Iso, R=0.3, charged hadrons only"),
+    NTupleVariable("chargedHadRelIso04",  lambda x : x.chargedHadronIsoR(0.4)/x.pt(), help="PF Rel Iso, R=0.4, charged hadrons only"), 
+
+    # Extra tracker-related variables (FIXME! @ 2016 Oct 13 Mengqing)
+    # NTupleVariable("trackerLayers", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().trackerLayersWithMeasurement(), int, help="Tracker Layers"),
+    # NTupleVariable("pixelLayers", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().pixelLayersWithMeasurement(), int, help="Pixel Layers"),
+    # NTupleVariable("trackerHits", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().numberOfValidTrackerHits(), int, help="Tracker hits"),
+    # NTupleVariable("lostOuterHits",    lambda x : (x.gsfTrack() if abs(x.pdgId())==11 else x.innerTrack()).hitPattern().numberOfLostHits(ROOT.reco.HitPattern.MISSING_OUTER_HITS), int, help="Number of lost hits on inner track"),
+    # NTupleVariable("innerTrackValidHitFraction", lambda x : (x.gsfTrack() if abs(x.pdgId())==11 else x.innerTrack()).validFraction(), help="fraction of valid hits on inner track"), 
+    # NTupleVariable("innerTrackChi2",      lambda x : (x.gsfTrack() if abs(x.pdgId())==11 else x.innerTrack()).normalizedChi2(), help="Inner track normalized chi2"),
+
+     # Extra muon ID working points
+    NTupleVariable("looseMuonId",   lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==13 else 1, int, help="Muon POG Loose id"),
+    NTupleVariable("tightMuonId",   lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==13 else 1, int, help="Muon POG Tight id"),
+    # NTupleVariable("highPtID",  lambda x : x.highPtID if hasattr(x,'highPtID') else  -999, help="highPtID"),
+    # NTupleVariable("trackerHighPtID",  lambda x : x.trackerHighPtID if hasattr(x,'trackerHighPtID') else  -999, help="trackerHighPtID"),
+
+    # Extra muon ID variables
+    NTupleVariable("nStations",    lambda x : x.numberOfMatchedStations() if abs(x.pdgId()) == 13 else 4, help="Number of matched muons stations (4 for electrons)"),
+    NTupleVariable("caloCompatibility", lambda x : x.caloCompatibility() if abs(x.pdgId()) == 13 else 0, help="Calorimetric compatibility"), 
+    NTupleVariable("globalTrackChi2", lambda x : x.globalTrack().normalizedChi2() if abs(x.pdgId()) == 13 and x.globalTrack().isNonnull() else 0, help="Global track normalized chi2"), 
+    NTupleVariable("trkKink", lambda x : x.combinedQuality().trkKink if abs(x.pdgId()) == 13 else 0, help="Tracker kink-finder"), 
+    NTupleVariable("segmentCompatibility",lambda x : x.segmentCompatibility() if abs(x.pdgId()) == 13 else 0, help="Segment-based compatibility"), 
+    NTupleVariable("chi2LocalPosition",lambda x : x.combinedQuality().chi2LocalPosition if abs(x.pdgId()) == 13 else 0, help="Tracker-Muon matching in position"),
+    NTupleVariable("chi2LocalMomentum",lambda x : x.combinedQuality().chi2LocalMomentum if abs(x.pdgId()) == 13 else 0, help="Tracker-Muon matching in momentum"),
+    NTupleVariable("glbTrackProbability",lambda x : x.combinedQuality().glbTrackProbability if abs(x.pdgId()) == 13 else 0, help="Global track pseudo-probability"), 
+
 ])
 
 ##------------------------------------------  

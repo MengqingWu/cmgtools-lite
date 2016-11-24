@@ -2,6 +2,35 @@ from CMGTools.BPH4L.analyzers.AutoFillTreeProducer  import *
 import math
 
 
+QuadType =  NTupleObjectType("QuadType", baseObjectTypes=[fourVectorType], variables = [
+    NTupleVariable("vtxProb",   lambda x : x.vtxProb, float),
+    NTupleVariable("vtxChi2",   lambda x : x.vtxChi2, float),
+    NTupleVariable("l1_index",  lambda x : x.leg1.index, int),
+    NTupleVariable("l2_index",  lambda x : x.leg2.index, int),
+    NTupleVariable("l3_index",  lambda x : x.leg3.index, int),
+    NTupleVariable("l4_index",  lambda x : x.leg4.index, int),  
+])
+
+DuoType = NTupleObjectType("DuoType", baseObjectTypes=[fourVectorType], variables = [
+    #NTupleVariable("vtxProb",   lambda x : x.vtxProb, float),
+    #NTupleVariable("vtxChi2",   lambda x : x.vtxChi2, float),
+    NTupleVariable("l1_index",  lambda x : x.leg1.index, int),
+    NTupleVariable("l2_index",  lambda x : x.leg2.index, int),
+    NTupleVariable("deltaPhi",  lambda x : x.deltaPhi(), float),       
+    NTupleVariable("deltaR",    lambda x : x.deltaR(), float),
+    #NTupleVariable("mt",   lambda x : x.mt(), float),       
+])
+
+MuFourType =  NTupleObjectType("VVType", baseObjectTypes=[], variables = [
+    NTupleSubObject("quad",  lambda x : x['quad'], QuadType),
+    NTupleSubObject("1a",  lambda x : x['pair1'].leg1, DuoType),
+    NTupleSubObject("1b",  lambda x : x['pair1'].leg2, DuoType),
+])
+
+#****
+#**** Below are from XZZ2l2v
+#****
+
 LLType = NTupleObjectType("LLType", baseObjectTypes=[fourVectorType], variables = [
     #NTupleVariable("TuneP_usage",   lambda x : x.useTuneP, int), 
     #NTupleVariable("TuneP_pt",   lambda x : x.TuneP_pt(), float),               
@@ -15,7 +44,6 @@ LLType = NTupleObjectType("LLType", baseObjectTypes=[fourVectorType], variables 
     #NTupleVariable("TuneP_deltaPhi",   lambda x : x.TuneP_deltaPhi(), float),       
     #NTupleVariable("TuneP_deltaR",   lambda x : x.TuneP_deltaR(), float),       
 ])
-
 
 
 VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
