@@ -44,10 +44,10 @@ coreSequence = [
     
 #sequence = cfg.Sequence(coreSequence)
 #sequence = cfg.Sequence(coreSequence+[vvSkimmer,fullTreeProducer])
-sequence = cfg.Sequence(coreSequence+[fullTreeProducer])
+sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = dataSamples
@@ -61,8 +61,8 @@ if test==1:
         #c.triggers=triggers_1mu_noniso
         #c.triggers=triggers_1e_noniso
 elif test==0:
-    #selectedComponents = dataSamples
-    selectedComponents = Charmonium
+    selectedComponents = dataSamples
+    #selectedComponents = Charmonium
     for c in selectedComponents:
         c.splitFactor = (len(c.files)/10 if len(c.files)>10 else 1)
 else:
