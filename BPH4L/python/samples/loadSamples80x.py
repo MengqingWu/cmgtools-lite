@@ -26,21 +26,21 @@ signalSamples = []
 mcSamples = signalSamples + backgroundSamples
 
 # data
-MuOnia=[#MuOnia_Run2016B_PromptV1,
-        MuOnia_Run2016B_PromptV2,
-        MuOnia_Run2016C_PromptV2,
-        MuOnia_Run2016D_PromptV2,
-        MuOnia_Run2016E_PromptV2,
-        MuOnia_Run2016F_PromptV1,
-        MuOnia_Run2016G_PromptV1,
+MuOnia=[MuOnia_Run2016B_ReRecoV1,
+        MuOnia_Run2016B_ReRecoV2,
+        MuOnia_Run2016C_ReRecoV1,
+        MuOnia_Run2016D_ReRecoV1,
+        MuOnia_Run2016E_ReRecoV1,
+        MuOnia_Run2016F_ReRecoV1,
+        MuOnia_Run2016G_ReRecoV1,
 ]
-Charmonium=[#Charmonium_Run2016B_PromptV1,
-            Charmonium_Run2016B_PromptV2,
-            Charmonium_Run2016C_PromptV2,
-            Charmonium_Run2016D_PromptV2,
-            Charmonium_Run2016E_PromptV2,
-            Charmonium_Run2016F_PromptV1,
-            Charmonium_Run2016G_PromptV1,
+Charmonium=[Charmonium_Run2016B_ReRecoV1,
+            Charmonium_Run2016B_ReRecoV2,
+            Charmonium_Run2016C_ReRecoV1,
+            Charmonium_Run2016D_ReRecoV1,
+            Charmonium_Run2016E_ReRecoV1,
+            Charmonium_Run2016F_ReRecoV1,
+            Charmonium_Run2016G_ReRecoV1,
 ]
 
 for s in MuOnia:
@@ -56,7 +56,8 @@ for s in Charmonium:
 dataSamples = MuOnia + Charmonium
 
 # JSON
-jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/'
+#jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/'
+jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/'
 
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt'
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt'
@@ -67,10 +68,11 @@ jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279588_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
 #goldenJson = 'Cert_271036-277933_13TeV_PromptReco_Collisions16_JSON_MuonPhys.txt'
-goldenJson = 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt'
+goldenJson = 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt' # Luminosity: 36.63/fb 
 
 #run_range = (271036,279588)
-run_range = (273013, 276811)
+#run_range = (273013, 276811) # 12.9/fb
+run_range = None
 
 jsonFile = jsonDir + goldenJson
 
@@ -96,5 +98,51 @@ for comp in dataSamples:
     comp.isData = True
     comp.json = jsonFile
     comp.run_range = run_range
-    comp.globalTag = "Summer15_25nsV6_DATA"
+    #comp.globalTag = "Summer15_25nsV6_DATA"
+    comp.globalTag = "80X_dataRun2_2016SeptRepro_v3"
 
+if __name__ == "__main__":
+    import sys
+    if "test" in sys.argv:
+        from CMGTools.RootTools.samples.ComponentCreator import testSamples
+        testSamples(dataSamples)
+    if "locality" in sys.argv:
+        import re
+        from CMGTools.Production.localityChecker import LocalityChecker
+        tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
+        for comp in dataSamples:
+            if len(comp.files) == 0: 
+                print '\033[34mE: Empty component: '+comp.name+'\033[0m'
+                continue
+            if not hasattr(comp,'dataset'): continue
+            if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
+            if "/store/" not in comp.files[0]: continue
+            if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
+            if not tier2Checker.available(comp.dataset):
+                print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
+            else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)
+    if "refresh" in sys.argv:
+        from CMGTools.Production.cacheChecker import CacheChecker
+        checker = CacheChecker()
+        datasets = dataSamples
+        if len(sys.argv) > 2: 
+            datasets = []
+            for x in sys.argv[2:]:
+                for s in dataSamples:
+                    if x in s.name and s not in datasets:
+                        datasets.append(s)
+            datasets.sort(key = lambda d : d.name)
+        for d in datasets:
+            print "Checking ",d.name," aka ",d.dataset
+            checker.checkComp(d, verbose=True)
+    if "list" in sys.argv:
+        from CMGTools.HToZZ4L.tools.configTools import printSummary
+        datasets = dataSamples
+        if len(sys.argv) > 2:
+            datasets = []
+            for x in sys.argv[2:]:
+                for s in dataSamples:
+                    if x in s.name and s not in datasets:
+                        datasets.append(s)
+            datasets.sort(key = lambda d : d.name)
+        printSummary(datasets)
