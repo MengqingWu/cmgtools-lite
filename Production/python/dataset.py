@@ -494,6 +494,9 @@ def createDataset( user, dataset, pattern, readcache=False,
     if readcache:
         try:
             data = readCache(dataset, user, pattern, run_range, json)
+            if len(data.files)==0:
+                #print "CreateDataset warning: no files in '%s' !" % (cacheFileName(dataset, user, pattern, run_range, json))
+                readcache = False
         except IOError:
             readcache = False
     if not readcache:
