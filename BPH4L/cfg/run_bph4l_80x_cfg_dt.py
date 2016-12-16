@@ -28,7 +28,7 @@ from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
 coreSequence = [
     skimAnalyzer,
     #genAna,
-    jsonAna,
+    jsonFilter,
     triggerAna,
     pileUpAna,
     vertexAna,
@@ -50,12 +50,12 @@ sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = dataSamples
+    #selectedComponents = dataSamples
     #selectedComponents = mcSamples
-    #selectedComponents = [MuOnia_Run2016B_ReRecoV1]
+    selectedComponents = [MuOnia_Run2016C_ReRecoV1]
     #selectedComponents = Charmonium
     for c in selectedComponents:
-        print '[debug]:', c.files
+        #print '[debug]:', c.files
         c.files = c.files[:1]
         #c.splitFactor = (len(c.files)/5 if len(c.files)>5 else 1)
         c.splitFactor = 1
