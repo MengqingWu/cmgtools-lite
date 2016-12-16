@@ -29,7 +29,7 @@ skimAnalyzer = cfg.Analyzer(
     )
 
 # Apply json file (if the dataset has one)
-jsonAna = cfg.Analyzer(
+jsonFilter = cfg.Analyzer(
     JSONAnalyzer, name="JSONAnalyzer",
     )
 
@@ -275,7 +275,7 @@ dumpEvents = cfg.Analyzer(
 coreSequence = [
     skimAnalyzer,
     #genAna,
-    jsonAna,
+    jsonFilter,
     triggerAna,
     pileUpAna,
     vertexAna,
