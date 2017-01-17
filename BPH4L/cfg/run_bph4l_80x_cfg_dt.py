@@ -28,7 +28,7 @@ from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
 coreSequence = [
     skimAnalyzer,
     #genAna,
-    jsonFilter,
+    jsonAna,
     triggerAna,
     pileUpAna,
     vertexAna,
@@ -41,10 +41,12 @@ coreSequence = [
     eventFlagsAna,
     triggerFlagsAna,
 ]
-    
+
+print "[debug]: coreSequence ==> ", coreSequence
 #sequence = cfg.Sequence(coreSequence)
 #sequence = cfg.Sequence(coreSequence+[vvSkimmer,fullTreeProducer])
 sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
+print "[debug]: sequence ==>", sequence
 
 #-------- HOW TO RUN
 test = 1
@@ -91,7 +93,6 @@ config = cfg.Config( components = selectedComponents,
                      sequence = sequence,
                      services = [],
                      events_class = event_class)
-
-
+print "[debug] in cfg_run.py"
 
 

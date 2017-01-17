@@ -18,7 +18,7 @@ jsonFilter=False # define json via 'component.json=xxx' in loadSamples80x.py
 
 json_dir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/'
 ##goldenJson='Cert_271036-277933_13TeV_PromptReco_Collisions16_JSON_MuonPhys.txt'
-goldenJson='Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt'
+goldenJson='Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt'
 json = json_dir + goldenJson
 #run_range = (273013, 276811) # used for ICHEP2016 - 12.9fb^-1
 run_range = None

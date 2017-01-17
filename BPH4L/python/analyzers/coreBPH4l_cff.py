@@ -29,8 +29,10 @@ skimAnalyzer = cfg.Analyzer(
     )
 
 # Apply json file (if the dataset has one)
-jsonFilter = cfg.Analyzer(
+# which will filter evts according to the Json
+jsonAna = cfg.Analyzer(
     JSONAnalyzer, name="JSONAnalyzer",
+    debug="yes",
     )
 
 # Filter using the 'triggers' and 'vetoTriggers' specified in the dataset
@@ -275,7 +277,7 @@ dumpEvents = cfg.Analyzer(
 coreSequence = [
     skimAnalyzer,
     #genAna,
-    jsonFilter,
+    jsonAna,
     triggerAna,
     pileUpAna,
     vertexAna,

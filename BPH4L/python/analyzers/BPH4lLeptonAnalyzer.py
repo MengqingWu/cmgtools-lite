@@ -150,7 +150,7 @@ class BPH4lLeptonAnalyzer( Analyzer ):
         self.n_mu = len(allmuons)
 
         #electrons        
-        allelectrons = self.makeAllElectrons(event)
+        #allelectrons = self.makeAllElectrons(event)
         #self.n_el= len(allelectrons)
         
         #--> lepton ID (count and filter)
@@ -342,7 +342,7 @@ class BPH4lLeptonAnalyzer( Analyzer ):
 
         # define electron ID
         for ele in allelectrons:
-            ele.loose_nonISO=ele.electronID("POG_Cuts_ID_full5x5_SPRING15_25ns_v1_ConvVetoDxyDz_Loose")
+            #ele.loose_nonISO=ele.electronID("POG_Cuts_ID_full5x5_SPRING15_25ns_v1_ConvVetoDxyDz_Loose")
             ele.heepV60_noISO_EB = ele.pt()>35.0 \
                          and abs(ele.superCluster().eta())<1.4442 \
                          and abs(ele.deltaEtaSeedClusterTrackAtVtx())<0.004 \
