@@ -6,7 +6,7 @@ import os
 ## -----------------------------
 ## twiki for news of samples (up to date):
 ## https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#Run2_Spring16_MiniAOD_v1_campaig
-## PromptReco changed to 23Sep2016 (data rereco)
+## PromptReco changed to 23Sep2016 (data rereco) - CMSSW_8_0_20 or later for condition database
 ##
 
 #####COMPONENT CREATOR

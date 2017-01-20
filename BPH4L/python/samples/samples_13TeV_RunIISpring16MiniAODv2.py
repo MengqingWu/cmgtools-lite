@@ -16,10 +16,6 @@ GJet_Pt_40toInf_DoubleEMEnriched = kreator.makeMCComponent("GJet_Pt_40toInf_Doub
 GJet_Pt_20toInf_DoubleEMEnriched = kreator.makeMCComponent("GJet_Pt_20toInf_DoubleEMEnriched","/GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM",  "CMS", ".*root",154500, useAAA=True)  # 38M
 
 
-
-
-
-
 # DY HT bins:
 #https://twiki.cern.ch/twiki/bin/view/CMS/SummaryTable1G25ns#DY_Z
 DYJetsToLL_M50_HT100to200 = kreator.makeMCComponent("DYJetsToLL_M50_HT100to200", "/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root",139.4*1.23)

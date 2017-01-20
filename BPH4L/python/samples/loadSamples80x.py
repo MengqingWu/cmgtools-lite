@@ -7,7 +7,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
 # Load backgrounds
-# from CMGTools.BPH4L.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+from CMGTools.BPH4L.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 # Load signals
 #from CMGTools.BPH4L.samples.samples_13TeV_signal80X import *
 # Load Data 
@@ -17,7 +17,7 @@ from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 
 
 # backgrounds
-backgroundSamples = []
+backgroundSamples = [JpsiToMuMu_Pt8]
 
 # signals
 signalSamples = []
