@@ -53,7 +53,8 @@ test = 1
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = mcSamples
-    selectedComponents = [JpsiToMuMu_OniaMuFilter]
+    #selectedComponents = [JpsiToMuMu_OniaMuFilter]
+    selectedComponents = [UpsilonToMuMu_Pt6]
     for c in selectedComponents:
         #print '[debug]:', c.files
         c.files = c.files[:1]

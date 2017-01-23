@@ -10,15 +10,34 @@ import os
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 
-# Gen info can be referred to: https://twiki.cern.ch/twiki/bin/view/CMS/BPH-Run2-TP
-# GenSim cloned from BPH-RunIISpring16DR80-00001 (McM)
-# Jpsi -> MuMu with 50ns PU, pythia8 with FSR on, pT(Jpsi) > 3GeV 
-JpsiToMuMu_OniaMuFilter = kreator.makeMCComponent("JpsiToMuMu_OniaMuFilter","/JpsiToMuMu_OniaMuonFilter_TuneCUEP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 999, useAAA=False) #30M evts  
+# see GenSim info:
+#     https://twiki.cern.ch/twiki/bin/view/CMS/BPH-Run2-QuarkOnia
+#     https://twiki.cern.ch/twiki/bin/view/CMS/BPH-Run2-TP
 
-JpsiToMuMu_Pt8 = kreator.makeMCComponent("JpsiToMuMu_Pt8","/JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 999, useAAA=False) #30M evts  
+# prompt Jpsi -> MuMu pythia8 with FSR on, pT(Jpsi-1S) > 3GeV
+# xsect * filter eff: https://cms-pdmv.cern.ch/mcm/requests?prepid=BPH-RunIISummer15GS-00008&page=0&shown=655487
+# Gen Parameters: https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BPH-RunIISummer15GS-00008
+JpsiToMuMu_OniaMuFilter = kreator.makeMCComponent("JpsiToMuMu_OniaMuFilter","/JpsiToMuMu_OniaMuonFilter_TuneCUEP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 53800000*0.172, useAAA=False) #30M evts  xsect in pb
+
+# prompt Jpsi -> MuMu pythia with FSR on, pT(Jpsi-1S) > 8 GeV
+# xsect * filter eff: https://cms-pdmv.cern.ch/mcm/requests?prepid=BPH-RunIISummer15GS-00012&page=0&shown=655487
+# Gen Parameters: https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BPH-RunIISummer15GS-00012
+JpsiToMuMu_Pt8 = kreator.makeMCComponent("JpsiToMuMu_Pt8","/JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 54980000*0.003, useAAA=False) #30M evts  
+
+# non-prompt Jpsi -> MuMu (Bu->Kstar+MuMu, i.e. filter only pp events which produce a B)
+# xsect * filter eff: https://cms-pdmv.cern.ch/mcm/requests?prepid=BPH-RunIISummer15GS-00029&page=0&shown=524415
+# Gen Parameters: https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BPH-RunIIWinter15GS-00027/0
+IncJpsiToMuMu_Pt3 = kreator.makeMCComponent("IncJpsiToMuMu_Pt3","/InclusiveBtoJpsitoMuMu_JpsiPt3_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 16240000000*0.000036, useAAA=False) # 9M evts
+
+# Upsilon -> MuMu pythia8 pT(Upsilon-1S) > 6 GeV
+# xsect * filter eff: https://cms-pdmv.cern.ch/mcm/requests?page=0&prepid=BPH-RunIISummer15GS-00013&shown=655487
+# Gen Parameters: https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/BPH-RunIISummer15GS-00013
+UpsilonToMuMu_Pt6 = kreator.makeMCComponent("UpsilonToMuMu_Pt6","/UpsilonMuMu_UpsilonPt6_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 10890000*0.0395, useAAA=False) #M evts  xsect in pb
 
 
-####*********************** stale from xzz2l2v:
+
+
+####*********************** stale from xzz2l2v ***********************####
 # # Photon+Jets
 # GJet_Pt_15To6000 = kreator.makeMCComponent("GJet_Pt_15To6000","/GJet_Pt-15To6000_TuneCUETP8M1-Flat_13TeV_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root",154500, useAAA=False) # 8M evt
 

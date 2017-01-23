@@ -21,6 +21,8 @@ from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 # backgrounds
 backgroundSamples =[JpsiToMuMu_Pt8,
                     JpsiToMuMu_OniaMuFilter,
+                    IncJpsiToMuMu_Pt3,
+                    UpsilonToMuMu_Pt6,
 ]
 
 # signals
