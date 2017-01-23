@@ -1,6 +1,7 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
+## updated from Jan-20-2017
 ## according to https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#MC_for_Moriond_2017
 ## using  dataset=/*/RunIISummer16MiniAODv2*PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6*/MINIAODSIM
 ## recommended release: 8_0_25 or later
@@ -11,6 +12,7 @@ kreator = ComponentCreator()
 
 McMtagger="RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1"
 
+# Gen info : https://twiki.cern.ch/twiki/bin/view/CMS/BPH-RunIISummer15GS-QuarkOnia
 JpsiToMuMu_Pt8 = kreator.makeMCComponent("JpsiToMuMu_Pt8","/JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8/"+McMtagger+"/MINIAODSIM", "CMS", ".*root", 999, useAAA=False) #~30M
 
 

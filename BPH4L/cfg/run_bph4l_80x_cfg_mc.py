@@ -52,10 +52,8 @@ sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    #selectedComponents = dataSamples
     #selectedComponents = mcSamples
-    selectedComponents = [MuOnia_Run2016C_ReRecoV1]
-    #selectedComponents = Charmonium
+    selectedComponents = [JpsiToMuMu_OniaMuFilter]
     for c in selectedComponents:
         #print '[debug]:', c.files
         c.files = c.files[:1]
@@ -64,7 +62,7 @@ if test==1:
         #c.triggers=triggers_1mu_noniso
         #c.triggers=triggers_1e_noniso
 elif test==0:
-    selectedComponents = dataSamples
+    selectedComponents = mcSamples
     #selectedComponents = Charmonium
     for c in selectedComponents:
         c.splitFactor = (len(c.files)/10 if len(c.files)>10 else 1)
