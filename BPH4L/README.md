@@ -5,17 +5,17 @@ Analysis package of BPH exotics search for X->Jpis+Y->2mu2l final states.
  
 For 80X analysis.
 
-For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental#CMGTools_lite_release_for_ICHEP).
+For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental#CMGTools_lite_release_for_Morion).
 
 ## Basic setup (from the above link) is this:
 
 #### Set up CMSSW and the base git
 
- CMGTools-lite release for ICHEP 2016 (CMSSW 8_0_19) 
+ CMGTools-lite release for Moriond 2017 (CMSSW 8_0_25) 
 
 ```
-cmsrel CMSSW_8_0_19
-cd CMSSW_8_0_19/src
+cmsrel CMSSW_8_0_25
+cd CMSSW_8_0_25/src
 cmsenv
 git cms-init
 ```
@@ -36,6 +36,7 @@ git checkout -b heppy_80X cmg-central/heppy_80X
 #### Add your mirror, and push the 80X branch to it
 
 ```
+YOUR_GITHUB_REPOSITORY=$(git config user.github) # or set it manually if this doesn't work for you
 git remote add origin git@github.com:YOUR_GITHUB_REPOSITORY/cmg-cmssw.git
 git push -u origin heppy_80X
 ```
@@ -57,9 +58,18 @@ git push -u origin 80X
 #### Compile
 
 ```
-cd $CMSSW_BASE/src
-scram b -j 8
+cd $CMSSW_BASE/src && scram b -j 8
 ```
+
+### External packages:
+
+0. Spring16 MVA electron ID is already provided in the new sparse checkout. 
+
+1. Higgs combination package (note: not a validated release from the statistical point of view, but still ok to load PDFs, parse datacards, etc)
+
+  ``` 
+  git clone -b 80x-fix https://github.com/gpetruc/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+  ```
 
 
 Instruction to run jobs 
@@ -77,7 +87,7 @@ Instruction to run jobs
  Example configuration files are in cfg/ folder, e.g.
   
   ```
-  heppy mc_test run_xzz2l2nu_80x_cfg_loose_mc.py
+  heppy mc_test run_bph4l_80x_cfg_mc.py
   ```
  this will run config file run_xzz2l2nu_80x_cfg_loose_mc.py and output to directory mc_test
 
@@ -85,18 +95,11 @@ Instruction to run jobs
   There are many options to pass to the main function of Heppy,
   one useful example is to run few (e.g. 100) events test:
   ```
-  heppy mc_test run_xzz2l2nu_80x_cfg_loose_mc.py -N 100
+  heppy mc_test run_bph4l_80x_cfg_mc.py -N 100
   ```
   you will have the first 100 events processed only.
 
 2. run batch jobs on lsf
-
-  Example scripts to submit lsf batch jobs are:
-  ```
-    cfg/loose_lsf_dt/sub_xzz2l2nu_80x_cfg_loose_dt.sh 
-    cfg/loose_lsf_mc/sub_xzz2l2nu_80x_cfg_loose_mc.sh 
-  ```
-  for data and mc respectively.
 
   LSF jobs can only be submitted on lxplus, your local machine doesn't work. 
 
