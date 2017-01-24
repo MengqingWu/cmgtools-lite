@@ -1,23 +1,23 @@
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount and JsonAna
+from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
 from PhysicsTools.Heppy.analyzers.gen.all import *
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.BPH4L.analyzers.Skimmer import *
 from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 from CMGTools.BPH4L.analyzers.PackedCandidateLoader import *
-from CMGTools.BPH4L.analyzers.BPH4lMultiFinalState  import *
+#from CMGTools.BPH4L.analyzers.BPH4lMultiFinalState  import *
 #from CMGTools.BPH4L.analyzers.BPH4lMultTrgEff import *
 from CMGTools.BPH4L.tools.leptonID  import *
 #from CMGTools.BPH4L.analyzers.BPH4lGenAnalyzer import *
 from CMGTools.BPH4L.analyzers.BPH4lLeptonAnalyzer import *
 from CMGTools.BPH4L.analyzers.BPH4lTriggerBitFilter import *
 from CMGTools.BPH4L.analyzers.BPH4lVertexAnalyzer import *
-from CMGTools.BPH4L.analyzers.BPH4lMETAnalyzer import *
+#from CMGTools.BPH4L.analyzers.BPH4lMETAnalyzer import *
 from CMGTools.BPH4L.analyzers.BPH4lDumpEvtList import *
 from CMGTools.BPH4L.analyzers.BPH4lJetAnalyzer import *
-from CMGTools.BPH4L.analyzers.BPH4lPhotonAnalyzer import *
+#from CMGTools.BPH4L.analyzers.BPH4lPhotonAnalyzer import *
 
 ###########################
 # define analyzers
@@ -121,23 +121,23 @@ lepAna = cfg.Analyzer(
 #         ],
 # )
 
-## Photon Analyzer (generic)
-photonAna = cfg.Analyzer(
-    BPH4lPhotonAnalyzer, name='photonAnalyzer',
-    photons='slimmedPhotons',
-    ptMin = 15,
-    etaMax = 2.5,
-    doPhotonScaleCorrections=False,
-    gammaID = "POG_SPRING15_25ns_Loose",
-    rhoPhoton = 'fixedGridRhoFastjetAll',
-    gamma_isoCorr = 'rhoArea',
-    doFootprintRemovedIsolation = True,
-    packedCandidates = 'packedPFCandidates',
-    footprintRemovedIsolationPUCorr = 'rhoArea',
-    conversionSafe_eleVeto = True,
-    do_mc_match = True,
-    do_randomCone = False,
-)
+# ## Photon Analyzer (generic)
+# photonAna = cfg.Analyzer(
+#     BPH4lPhotonAnalyzer, name='photonAnalyzer',
+#     photons='slimmedPhotons',
+#     ptMin = 15,
+#     etaMax = 2.5,
+#     doPhotonScaleCorrections=False,
+#     gammaID = "POG_SPRING15_25ns_Loose",
+#     rhoPhoton = 'fixedGridRhoFastjetAll',
+#     gamma_isoCorr = 'rhoArea',
+#     doFootprintRemovedIsolation = True,
+#     packedCandidates = 'packedPFCandidates',
+#     footprintRemovedIsolationPUCorr = 'rhoArea',
+#     conversionSafe_eleVeto = True,
+#     do_mc_match = True,
+#     do_randomCone = False,
+# )
 
 
 ## Jets Analyzer (generic)
@@ -183,26 +183,26 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True }, # numbers for AK4CHS jets
     )
 
-metAna = cfg.Analyzer(
-    BPH4lMETAnalyzer, name="metAnalyzer",
-    metCollection     = "slimmedMETs",
-    noPUMetCollection = "slimmedMETs",
-    copyMETsByValue = False,
-    doTkMet = False,
-    doMetNoPU = False,
-    doMetNoMu = False,
-    doMetNoEle = False,
-    doMetNoPhoton = False,
-    recalibrate = False, # or "type1", or True, or False
-    doMetShiftFromJEC = False, # only works with recalibrate on
-    applyJetSmearing = False, # not change the final met used in multiStateAna, does nothing unless the jet smearing turned on in jetAna for MC, copy self.met for data
-    old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
-    jetAnalyzerPostFix = "",
-    candidates='packedPFCandidates',
-    candidatesTypes='std::vector<pat::PackedCandidate>',
-    dzMax = 0.1,
-    collectionPostFix = "",
-    )
+# metAna = cfg.Analyzer(
+#     BPH4lMETAnalyzer, name="metAnalyzer",
+#     metCollection     = "slimmedMETs",
+#     noPUMetCollection = "slimmedMETs",
+#     copyMETsByValue = False,
+#     doTkMet = False,
+#     doMetNoPU = False,
+#     doMetNoMu = False,
+#     doMetNoEle = False,
+#     doMetNoPhoton = False,
+#     recalibrate = False, # or "type1", or True, or False
+#     doMetShiftFromJEC = False, # only works with recalibrate on
+#     applyJetSmearing = False, # not change the final met used in multiStateAna, does nothing unless the jet smearing turned on in jetAna for MC, copy self.met for data
+#     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
+#     jetAnalyzerPostFix = "",
+#     candidates='packedPFCandidates',
+#     candidatesTypes='std::vector<pat::PackedCandidate>',
+#     dzMax = 0.1,
+#     collectionPostFix = "",
+#     )
 
 
 lepCombAna = cfg.Analyzer(
@@ -222,15 +222,15 @@ packedAna = cfg.Analyzer(
     select=lambda x: x.pt()<13000.0
     )
 
-multiStateAna = cfg.Analyzer(
-    BPH4lMultiFinalState,
-    name='MultiFinalStateMaker',
-    processTypes = ["LLNuNu"], # can include "LLNuNu", "ElMuNuNu", "PhotonJets" 
-    selectPairLLNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>60.0 and x.leg1.mass()<180.0 and x.leg2.pt()>0.0),
-    selectPairElMuNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>30.0 and x.leg1.mass()<300.0 and x.leg2.pt()>0.0),
-    selectPhotonJets = (lambda x: x.leg1.pt()>20.0 and x.leg2.pt()>50.0),
-    suffix = '',
-    )
+# multiStateAna = cfg.Analyzer(
+#     BPH4lMultiFinalState,
+#     name='MultiFinalStateMaker',
+#     processTypes = ["LLNuNu"], # can include "LLNuNu", "ElMuNuNu", "PhotonJets" 
+#     selectPairLLNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>60.0 and x.leg1.mass()<180.0 and x.leg2.pt()>0.0),
+#     selectPairElMuNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>30.0 and x.leg1.mass()<300.0 and x.leg2.pt()>0.0),
+#     selectPhotonJets = (lambda x: x.leg1.pt()>20.0 and x.leg2.pt()>50.0),
+#     suffix = '',
+#     )
 
 # Create flags for MET filter bits
 """followed by the MET filters recommendations from
@@ -283,11 +283,11 @@ coreSequence = [
     vertexAna,
     lepAna,
     jetAna,
-    metAna,
-    photonAna,
+#    metAna,
+#    photonAna,
     lepCombAna,
 #    packedAna,
-    multiStateAna,
+#    multiStateAna,
     eventFlagsAna,
 #    triggerFlagsAna
 ]

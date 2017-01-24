@@ -34,11 +34,10 @@ coreSequence = [
     vertexAna,
     lepAna,
     jetAna,
-    metAna,
+    #metAna,
     #photonAna,
     lepCombAna,
     #multiStateAna,
-    eventFlagsAna,
     triggerFlagsAna,
 ]
 
@@ -52,8 +51,8 @@ sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = mcSamples
-    #selectedComponents = [JpsiToMuMu_OniaMuFilter]
+    #selectedComponents = mcSamples
+    selectedComponents = [JpsiToMuMu_OniaMuFilter]
     #selectedComponents = [UpsilonToMuMu_Pt6]
     for c in selectedComponents:
         #print '[debug]:', c.files

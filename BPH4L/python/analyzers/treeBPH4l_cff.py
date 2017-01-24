@@ -1,5 +1,5 @@
 from CMGTools.BPH4L.analyzers.AutoFillTreeProducer  import * 
-from CMGTools.BPH4L.analyzers.BPH4lTypes  import * 
+from CMGTools.BPH4L.analyzers.bph4lTypes  import * 
 from CMGTools.BPH4L.analyzers.Skimmer  import * 
 import PhysicsTools.HeppyCore.framework.config as cfg
 
@@ -27,7 +27,7 @@ MuonTreeProducer = cfg.Analyzer(
      ],
      globalObjects =  {
          #"met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, with 76X type 1 corrections"),
-         "met_miniAod" : NTupleObject("met", metType, help="PF E_{T}^{miss} stored in miniAOD"),
+         #"met_miniAod" : NTupleObject("met", metType, help="PF E_{T}^{miss} stored in miniAOD"),
      },
      collections = {
          #"LL"  : NTupleCollection("Zll",LLType,5, help="Z to ll"),
