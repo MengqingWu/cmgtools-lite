@@ -7,44 +7,24 @@ from CMGTools.BPH4L.fwlite.Config import printComps
 from CMGTools.BPH4L.RootTools import *
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
-
 #Load all common analyzers
-from CMGTools.BPH4L.analyzers.coreBPH4l_cff import *
+from CMGTools.BPH4L.analyzers.bph4lCore_cff import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.BPH4L.samples.loadSamples80x import *
+
 selectedComponents = mcSamples+dataSamples
 
-triggerFlagsAna.triggerBits ={
-    "jpsi2mu":triggers_jpsi2mu,
-    "upsilon2mu":triggers_upsilon2mu,
-    "3mu":triggers_3mu,
-}
-
-#-------- Analyzer
-from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
+# triggerFlagsAna.triggerBits ={
+#     "jpsi2mu":triggers_jpsi2mu,
+#     "upsilon2mu":triggers_upsilon2mu,
+#     "3mu":triggers_3mu,
+# }
 
 #-------- SEQUENCE
-coreSequence = [
-    skimAnalyzer,
-    #genAna,
-    jsonAna,
-    triggerAna,
-    pileUpAna,
-    vertexAna,
-    lepAna,
-    jetAna,
-    #metAna,
-    #photonAna,
-    lepCombAna,
-    #multiStateAna,
-    triggerFlagsAna,
-]
 
 #print "[debug]: coreSequence ==> ", coreSequence
 #sequence = cfg.Sequence(coreSequence)
-#sequence = cfg.Sequence(coreSequence+[vvSkimmer,fullTreeProducer])
-#sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
 sequence = cfg.Sequence(bph4lCoreSequence)
 #print "[debug]: sequence ==>", sequence
 

@@ -28,6 +28,7 @@ class BPH4lLepCombMaker( Analyzer ):
         self.QuadObjFactory = QuadObjFactory()
 
         self.printalot = True # debug print
+        self.do_filter = cfg_ana.do_filter if hasattr(cfg_ana, 'do_filter') else False
         
     def declareHandles(self):
         super(BPH4lLepCombMaker, self).declareHandles()
@@ -115,12 +116,15 @@ class BPH4lLepCombMaker( Analyzer ):
         event.MuFour = [quad for quad in MuFour if quad['quad'].vtxProb > pvalueLevel] # select MuFour only if vtxProb > 0.05
 
         # filter events without 4mu comb:
-        if self.n_pass_MuFour>0.1: 
-            self.counters.counter('events').inc('pass 0 charge 4mu evts')
+        if self.do_filter:
+            if self.n_pass_MuFour>0.1: 
+                self.counters.counter('events').inc('pass 0 charge 4mu evts')
+                self.counters.counter('events').inc('pass events') 
+                return True
+            else: return False
+        else:
             self.counters.counter('events').inc('pass events') 
             return True
-        else: return False
-
 
 
         

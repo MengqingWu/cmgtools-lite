@@ -1,26 +1,30 @@
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
+
 from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
 from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
 from PhysicsTools.HeppyCore.utils.deltar import *
-#from CMGTools.BPH4L.analyzers.Skimmer import *
-from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
-from CMGTools.BPH4L.analyzers.PackedCandidateLoader import *
-#from CMGTools.BPH4L.analyzers.BPH4lMultiFinalState  import *
-#from CMGTools.BPH4L.analyzers.BPH4lMultTrgEff import *
-from CMGTools.BPH4L.tools.leptonID  import *
-#from CMGTools.BPH4L.analyzers.BPH4lGenAnalyzer import *
-from CMGTools.BPH4L.analyzers.BPH4lLeptonAnalyzer import *
-from CMGTools.BPH4L.analyzers.BPH4lTriggerBitFilter import *
-from CMGTools.BPH4L.analyzers.BPH4lVertexAnalyzer import *
-#from CMGTools.BPH4L.analyzers.BPH4lMETAnalyzer import *
-from CMGTools.BPH4L.analyzers.BPH4lDumpEvtList import *
-from CMGTools.BPH4L.analyzers.BPH4lJetAnalyzer import *
-#from CMGTools.BPH4L.analyzers.BPH4lPhotonAnalyzer import *
-from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
 
 from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
+from CMGTools.BPH4L.analyzers.core.BPH4lTriggerBitFilter import *
+
+from CMGTools.BPH4L.analyzers.objects.BPH4lLeptonAnalyzer import *
+from CMGTools.BPH4L.analyzers.objects.BPH4lVertexAnalyzer import *
+from CMGTools.BPH4L.analyzers.objects.BPH4lJetAnalyzer import *
+#from CMGTools.BPH4L.analyzers.bak.BPH4lPhotonAnalyzer import *
+#from CMGTools.BPH4L.analyzers.bak.BPH4lMETAnalyzer import *
+#from CMGTools.BPH4L.analyzers.bak.BPH4lGenAnalyzer import *
+#from CMGTools.BPH4L.tools.leptonID  import *
+
+from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
+#from CMGTools.BPH4L.analyzers.bak.BPH4lMultiFinalState  import *
+#from CMGTools.BPH4L.analyzers.bak.BPH4lMultTrgEff import *
+from CMGTools.BPH4L.analyzers.eventAux.PackedCandidateLoader import *
+from CMGTools.BPH4L.analyzers.eventAux.BPH4lDumpEvtList import *
+
+from CMGTools.BPH4L.analyzers.EventSkimmer import *
+from CMGTools.BPH4L.analyzers.bph4l_Tree import *
 
 ###########################
 # define analyzers
@@ -99,7 +103,7 @@ lepAna = cfg.Analyzer(
     rhoElectronPfIso = 'fixedGridRhoFastjetAll',
     #applyIso = False,
     applyID = True,
-    do_filter=True,
+    do_filter=False,
     electronIDVersion = 'looseID', # can be looseID or HEEPv6
     electronIsoVersion = 'pfISO', # can be pfISO or miniISO
     mu_isoCorr = "rhoArea" ,
@@ -124,7 +128,6 @@ lepAna = cfg.Analyzer(
     # },
     doElectronScaleCorrections = None,
     )
-
 
 # ## Photon Analyzer (generic)
 # photonAna = cfg.Analyzer(
@@ -234,6 +237,7 @@ metAna = cfg.Analyzer(
 lepCombAna = cfg.Analyzer(
     BPH4lLepCombMaker,
     name='lepCombMaker',
+    do_filter = False,
     selectMuMuPair = (lambda x: (x.leg1.highPtID or x.leg2.highPtID) and ((x.leg1.pt()>50.0 and abs(x.leg1.eta())<2.1) or (x.leg2.pt()>50.0 and abs(x.leg2.eta())<2.1))),
     selectElElPair = (lambda x: x.leg1.pt()>115.0 or x.leg2.pt()>115.0 ),
     selectVBoson = (lambda x: x.pt()>100.0 and x.mass()>60.0 and x.mass()<120.0),
@@ -245,7 +249,7 @@ lepCombAna = cfg.Analyzer(
 packedAna = cfg.Analyzer(
     PackedCandidateLoader,
     name = 'PackedCandidateLoader',
-    select=lambda x: x.pt()<13000.0
+    select = lambda x: x.pt()<13000.0
     )
 
 # multiStateAna = cfg.Analyzer(
@@ -303,8 +307,23 @@ dumpEvents = cfg.Analyzer(
     BPH4lDumpEvtList, name="BPH4lDumpEvtList",
     )
 
+vvSkimmer = cfg.Analyzer(
+    EventSkimmer,
+    name='vvSkimmer',
+    #required = ['LLNuNu', 'ElMuNuNu']
+    required = ['LLNuNu']
+)
 
-################ Core sequence of all common modules
+leptonSkimmer = cfg.Analyzer(
+    EventSkimmer,
+    name='leptonSkimmer',
+    required = ['inclusiveLeptons']
+)
+
+
+###########################
+# Core sequence of all common modules
+###########################
 
 bph4lPreSequence = [
     skimAnalyzer,
@@ -325,10 +344,11 @@ bph4lObjSequence = [
 
 bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [   
     lepCombAna,
-    leptonSkimmer,
+    #multiStateAna,
+    #leptonSkimmer,
     MuonTreeProducer,
     #packedAna,
-    #multiStateAna,
+    dumpEvents,
 ]
 
 ###################

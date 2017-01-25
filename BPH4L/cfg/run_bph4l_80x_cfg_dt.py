@@ -9,7 +9,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 
 #Load all common analyzers
-from CMGTools.BPH4L.analyzers.coreBPH4l_cff import *
+from CMGTools.BPH4L.analyzers.bph4lCore_cff import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.BPH4L.samples.loadSamples80x import *
@@ -22,7 +22,7 @@ triggerFlagsAna.triggerBits ={
 }
 
 #-------- Analyzer
-from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
+from CMGTools.BPH4L.analyzers.bph4l_Tree import *
 
 #-------- SEQUENCE
 coreSequence = [

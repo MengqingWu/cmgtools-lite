@@ -1,4 +1,4 @@
-from CMGTools.BPH4L.analyzers.AutoFillTreeProducer  import * 
+from CMGTools.BPH4L.analyzers.core.AutoFillTreeProducer  import * 
 import math
 
 

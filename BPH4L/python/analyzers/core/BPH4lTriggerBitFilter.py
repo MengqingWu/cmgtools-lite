@@ -1,3 +1,7 @@
+# Note by Mengqing @Jan-25-2017
+# Origin from PhysicsTools/Heppy/python/analyzers/core/TriggerBitFilter.py
+# only with the 'counters' output added
+
 import ROOT
 
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer

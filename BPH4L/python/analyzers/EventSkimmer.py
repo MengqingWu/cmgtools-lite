@@ -4,19 +4,19 @@ from PhysicsTools.HeppyCore.framework.event import Event
 import os
 
         
-class Skimmer( Analyzer ):
+class EventSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
-        super(Skimmer,self).__init__(cfg_ana,cfg_comp,looperName)
+        super(EventSkimmer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.required = cfg_ana.required
     def declareHandles(self):
-        super(Skimmer, self).declareHandles()
+        super(EventSkimmer, self).declareHandles()
         self.counters.addCounter('events')
         count = self.counters.counter('events')
         count.register('all events')
         count.register('passed skim')
 
     def beginLoop(self, setup):
-        super(Skimmer,self).beginLoop(setup)
+        super(EventSkimmer,self).beginLoop(setup)
 
     def process(self, event):
         self.readCollections( event.input )

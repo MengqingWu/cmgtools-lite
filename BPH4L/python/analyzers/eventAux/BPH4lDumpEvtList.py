@@ -19,25 +19,25 @@ class BPH4lDumpEvtList( Analyzer ):
 
         self.outfile = open(self.dirName+'/eventlist.txt', 'w') 
 
-        #line = '*'+'*'*11*4
-        #self.outfile.write(line+'\n')
-        #line = '*'+'Row'.rjust(9)+' *'+'run'.rjust(9)+' *'+'lumisec'.rjust(9)+' *'+'event'.rjust(9)+' *'
-        #self.outfile.write(line+'\n')
-        #line = '*'+'*'*11*4
-        #self.outfile.write(line+'\n')
+        line = '*'+'*'*11*4
+        self.outfile.write(line+'\n')
+        line = '*'+'Row'.rjust(9)+' *'+'run'.rjust(9)+' *'+'lumisec'.rjust(9)+' *'+'event'.rjust(9)+' *'
+        self.outfile.write(line+'\n')
+        line = '*'+'*'*11*4
+        self.outfile.write(line+'\n')
 
 
     def process(self, event):
         self.readCollections( event.input )
 
-        #line  = '*'+str(self.nevts).rjust(9)+' *'
-        #line += str(event.input.eventAuxiliary().id().run()).rjust(9)+' *'
-        #line += str(event.input.eventAuxiliary().id().luminosityBlock()).rjust(9)+' *'
-        #line += str(event.input.eventAuxiliary().id().event()).rjust(9)+' *'
+        line  = '*'+str(self.nevts).rjust(9)+' *'
+        line += str(event.input.eventAuxiliary().id().run()).rjust(9)+' *'
+        line += str(event.input.eventAuxiliary().id().luminosityBlock()).rjust(9)+' *'
+        line += str(event.input.eventAuxiliary().id().event()).rjust(9)+' *'
 
-        line  = str(event.input.eventAuxiliary().id().run())+','
-        line += str(event.input.eventAuxiliary().id().luminosityBlock())+','
-        line += str(event.input.eventAuxiliary().id().event())
+        # line  = str(event.input.eventAuxiliary().id().run())+', '
+        # line += str(event.input.eventAuxiliary().id().luminosityBlock())+', '
+        # line += str(event.input.eventAuxiliary().id().event())
 
         self.outfile.write(line+'\n')
 

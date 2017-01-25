@@ -1,24 +1,29 @@
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount
+
+from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
-from PhysicsTools.Heppy.analyzers.gen.all import *
+from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
 from PhysicsTools.HeppyCore.utils.deltar import *
+
+from CMGTools.BPH4L.analyzers.core.BPH4lTriggerBitFilter import *
+
 from CMGTools.BPH4L.analyzers.Skimmer import *
-from CMGTools.BPH4L.analyzers.XZZLeptonicVMaker import *
+from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 from CMGTools.BPH4L.analyzers.PackedCandidateLoader import *
-from CMGTools.BPH4L.analyzers.XZZMultiFinalState  import *
-from CMGTools.BPH4L.analyzers.XZZMultTrgEff import *
-from CMGTools.BPH4L.tools.leptonID  import *
-from CMGTools.BPH4L.analyzers.XZZGenAnalyzer import *
-from CMGTools.BPH4L.analyzers.XZZLeptonAnalyzer import *
-from CMGTools.BPH4L.analyzers.XZZTriggerBitFilter import *
-from CMGTools.BPH4L.analyzers.XZZVertexAnalyzer import *
-from CMGTools.BPH4L.analyzers.XZZMETAnalyzer import *
-from CMGTools.BPH4L.analyzers.XZZDumpEvtList import *
-from CMGTools.BPH4L.analyzers.XZZJetAnalyzer import *
-#from CMGTools.BPH4L.analyzers.XZZLHEWeightAnalyzer import *
-from CMGTools.BPH4L.analyzers.XZZPhotonAnalyzer import *
+#from CMGTools.BPH4L.analyzers.BPH4lMultiFinalState  import *
+#from CMGTools.BPH4L.analyzers.BPH4lMultTrgEff import *
+#from CMGTools.BPH4L.tools.leptonID  import *
+#from CMGTools.BPH4L.analyzers.BPH4lGenAnalyzer import *
+from CMGTools.BPH4L.analyzers.BPH4lLeptonAnalyzer import *
+from CMGTools.BPH4L.analyzers.BPH4lVertexAnalyzer import *
+#from CMGTools.BPH4L.analyzers.BPH4lMETAnalyzer import *
+from CMGTools.BPH4L.analyzers.BPH4lDumpEvtList import *
+from CMGTools.BPH4L.analyzers.BPH4lJetAnalyzer import *
+#from CMGTools.BPH4L.analyzers.BPH4lPhotonAnalyzer import *
+from CMGTools.BPH4L.analyzers.bph4l_Tree import *
+
+from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 
 ###########################
 # define analyzers
@@ -30,13 +35,15 @@ skimAnalyzer = cfg.Analyzer(
     )
 
 # Apply json file (if the dataset has one)
+# which will filter evts according to the Json
 jsonAna = cfg.Analyzer(
     JSONAnalyzer, name="JSONAnalyzer",
+    debug="yes",
     )
 
 # Filter using the 'triggers' and 'vetoTriggers' specified in the dataset
 triggerAna = cfg.Analyzer(
-    XZZTriggerBitFilter, name="TriggerBitFilter",
+    BPH4lTriggerBitFilter, name="TriggerBitFilter",
     )
 
 # This analyzer actually does the pile-up reweighting (generic)
@@ -47,22 +54,37 @@ pileUpAna = cfg.Analyzer(
     )
 
 
-## Gen Info Analyzer 
+# ## Gen Info Analyzer 
+# genAna = cfg.Analyzer(
+#     BPH4lGenAnalyzer, name="BPH4lGenAnalyzer",
+#     # Print out debug information
+#     verbose = False,
+#     filter = "None",
+#     )
+
+# Gen Info Analyzer (generic):
 genAna = cfg.Analyzer(
-    XZZGenAnalyzer, name="XZZGenAnalyzer",
+    GeneratorAnalyzer, name="GeneratorAnalyzer",
+    # BSM particles that can appear with status <= 2 and should be kept
+    stableBSMParticleIds = [], #[ 1000022 ],
+    # Particles of which we want to save the pre-FSR momentum (a la status 3).
+    # Note that for quarks and gluons the post-FSR doesn't make sense,
+    # so those should always be in the list
+    savePreFSRParticleIds = [], #[ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    # Make also the list of all genParticles, for other analyzers to handle
+    makeAllGenParticles = True,
+    # Make also the splitted lists
+    makeSplittedGenLists = True,
+    allGenTaus = False,
+    # Save LHE weights from LHEEventProduct
+    makeLHEweights = True,
     # Print out debug information
     verbose = False,
-    filter = "None",
-    )
-
-# ## LHEWeightsAnalyzer
-# lheWeightAna = cfg.Analyzer(
-#     XZZLHEWeightAnalyzer, name="LHEWeightAnalyzer",
-# )
+)
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
-    XZZVertexAnalyzer, name="VertexAnalyzer",
+    BPH4lVertexAnalyzer, name="VertexAnalyzer",
     allVertices = "offlineSlimmedPrimaryVertices",
     vertexWeight = None,
     fixedWeight = 1,
@@ -70,15 +92,15 @@ vertexAna = cfg.Analyzer(
     )
 
 lepAna = cfg.Analyzer(
-    XZZLeptonAnalyzer, name="leptonAnalyzer",
+    BPH4lLeptonAnalyzer, name="leptonAnalyzer",
     muons='slimmedMuons',
     electrons='slimmedElectrons',
     packedCandidates = 'packedPFCandidates',
-    muonUseTuneP = True,
+    muonUseTuneP = False,
     rhoMuon= 'fixedGridRhoFastjetCentralNeutral',
     rhoElectronMiniIso = 'fixedGridRhoFastjetCentralNeutral',
     rhoElectronPfIso = 'fixedGridRhoFastjetAll',
-    applyIso = True,
+    #applyIso = False,
     applyID = True,
     do_filter=False,
     electronIDVersion = 'looseID', # can be looseID or HEEPv6
@@ -90,61 +112,44 @@ lepAna = cfg.Analyzer(
     miniIsolationPUCorr = None, # Allowed options: 'rhoArea' (EAs for 03 cone scaled by R^2), 'deltaBeta', 
                                      # 'raw' (uncorrected), 'weights' (delta beta weights; not validated)
                                      # Choose None to just use the individual object's PU correction
-    doMuonScaleCorrections = ( 'Kalman', {
-        'MC': 'MC_80X_13TeV',
-        'Data': 'DATA_80X_13TeV',
-        'isSync': False,
-        'smearMode': 'ebe'
-    }),
-    doElectronScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV1_2016_ele',
-        'GBRForest': ('$CMSSW_BASE/src/CMGTools/BPH4L/data/GBRForest_data_ICHEP16_combined.root',
-                      'gedelectron_p4combination_25ns'),
-        'isSync': False
-    },
+    # doMuonScaleCorrections = ( 'Kalman', {
+    #     'MC': 'MC_80X_13TeV',
+    #     'Data': 'DATA_80X_13TeV',
+    #     'isSync': False,
+    #     'smearMode': 'ebe'
+    # }),
+    doMuonScaleCorrections = None,
+    # doElectronScaleCorrections = {
+    #     'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV1_2016_ele',
+    #     'GBRForest': ('$CMSSW_BASE/src/CMGTools/BPH4L/data/GBRForest_data_ICHEP16_combined.root',
+    #                   'gedelectron_p4combination_25ns'),
+    #     'isSync': False
+    # },
+    doElectronScaleCorrections = None,
     )
 
-multtrg = cfg.Analyzer(
-    XZZMultTrgEff, name="multitrigger",
-    HLTlist=[
-        'HLT_Ele105_CaloIdVT_GsfTrkIdT',
-        'HLT_Ele115_CaloIdVT_GsfTrkIdT',
-        'HLT_Mu45_eta2p1',
-        'HLT_Mu50',
-        'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ',
-        'HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ',
-        'HLT_Ele23_WPLoose_Gsf',
-        'HLT_Ele22_eta2p1_WP75_Gsf',
-        'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ',
-        'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ',
-        'HLT_IsoMu20',
-        'HLT_IsoTkMu20',
-        'HLT_IsoMu27',
-        ],
-)
-
-## Photon Analyzer (generic)
-photonAna = cfg.Analyzer(
-    XZZPhotonAnalyzer, name='photonAnalyzer',
-    photons='slimmedPhotons',
-    ptMin = 15,
-    etaMax = 2.5,
-    doPhotonScaleCorrections=False,
-    gammaID = "POG_SPRING15_25ns_Loose",
-    rhoPhoton = 'fixedGridRhoFastjetAll',
-    gamma_isoCorr = 'rhoArea',
-    doFootprintRemovedIsolation = True,
-    packedCandidates = 'packedPFCandidates',
-    footprintRemovedIsolationPUCorr = 'rhoArea',
-    conversionSafe_eleVeto = True,
-    do_mc_match = True,
-    do_randomCone = False,
-)
+# ## Photon Analyzer (generic)
+# photonAna = cfg.Analyzer(
+#     BPH4lPhotonAnalyzer, name='photonAnalyzer',
+#     photons='slimmedPhotons',
+#     ptMin = 15,
+#     etaMax = 2.5,
+#     doPhotonScaleCorrections=False,
+#     gammaID = "POG_SPRING15_25ns_Loose",
+#     rhoPhoton = 'fixedGridRhoFastjetAll',
+#     gamma_isoCorr = 'rhoArea',
+#     doFootprintRemovedIsolation = True,
+#     packedCandidates = 'packedPFCandidates',
+#     footprintRemovedIsolationPUCorr = 'rhoArea',
+#     conversionSafe_eleVeto = True,
+#     do_mc_match = True,
+#     do_randomCone = False,
+# )
 
 
 ## Jets Analyzer (generic)
 jetAna = cfg.Analyzer(
-    XZZJetAnalyzer, name='jetAnalyzer',
+    BPH4lJetAnalyzer, name='jetAnalyzer',
     debug=False,
     jetCol = 'slimmedJets',
     copyJetsByValue = True,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
@@ -185,19 +190,40 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True }, # numbers for AK4CHS jets
     )
 
+# metAna = cfg.Analyzer(
+#     BPH4lMETAnalyzer, name="metAnalyzer",
+#     metCollection     = "slimmedMETs",
+#     noPUMetCollection = "slimmedMETs",
+#     copyMETsByValue = False,
+#     doTkMet = False,
+#     doMetNoPU = False,
+#     doMetNoMu = False,
+#     doMetNoEle = False,
+#     doMetNoPhoton = False,
+#     recalibrate = False, # or "type1", or True, or False
+#     doMetShiftFromJEC = False, # only works with recalibrate on
+#     applyJetSmearing = False, # not change the final met used in multiStateAna, does nothing unless the jet smearing turned on in jetAna for MC, copy self.met for data
+#     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
+#     jetAnalyzerPostFix = "",
+#     candidates='packedPFCandidates',
+#     candidatesTypes='std::vector<pat::PackedCandidate>',
+#     dzMax = 0.1,
+#     collectionPostFix = "",
+#     )
+
+## MET Analyzer (generic):
 metAna = cfg.Analyzer(
-    XZZMETAnalyzer, name="metAnalyzer",
+    METAnalyzer, name="metAnalyzer",
     metCollection     = "slimmedMETs",
-    noPUMetCollection = "slimmedMETs",
+    noPUMetCollection = "slimmedMETs",    
     copyMETsByValue = False,
     doTkMet = False,
     doMetNoPU = False,
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
-    recalibrate = False, # or "type1", or True, or False
-    doMetShiftFromJEC = False, # only works with recalibrate on
-    applyJetSmearing = False, # not change the final met used in multiStateAna, does nothing unless the jet smearing turned on in jetAna for MC, copy self.met for data
+    recalibrate = False, #"type1", # or "type1", or True
+    applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
     jetAnalyzerPostFix = "",
     candidates='packedPFCandidates',
@@ -207,9 +233,10 @@ metAna = cfg.Analyzer(
     )
 
 
-leptonicVAna = cfg.Analyzer(
-    XZZLeptonicVMaker,
-    name='leptonicVMaker',
+lepCombAna = cfg.Analyzer(
+    BPH4lLepCombMaker,
+    name='lepCombMaker',
+    do_filter = False,
     selectMuMuPair = (lambda x: (x.leg1.highPtID or x.leg2.highPtID) and ((x.leg1.pt()>50.0 and abs(x.leg1.eta())<2.1) or (x.leg2.pt()>50.0 and abs(x.leg2.eta())<2.1))),
     selectElElPair = (lambda x: x.leg1.pt()>115.0 or x.leg2.pt()>115.0 ),
     selectVBoson = (lambda x: x.pt()>100.0 and x.mass()>60.0 and x.mass()<120.0),
@@ -224,15 +251,15 @@ packedAna = cfg.Analyzer(
     select=lambda x: x.pt()<13000.0
     )
 
-multiStateAna = cfg.Analyzer(
-    XZZMultiFinalState,
-    name='MultiFinalStateMaker',
-    processTypes = ["LLNuNu"], # can include "LLNuNu", "ElMuNuNu", "PhotonJets" 
-    selectPairLLNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>60.0 and x.leg1.mass()<180.0 and x.leg2.pt()>0.0),
-    selectPairElMuNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>30.0 and x.leg1.mass()<300.0 and x.leg2.pt()>0.0),
-    selectPhotonJets = (lambda x: x.leg1.pt()>20.0 and x.leg2.pt()>50.0),
-    suffix = '',
-    )
+# multiStateAna = cfg.Analyzer(
+#     BPH4lMultiFinalState,
+#     name='MultiFinalStateMaker',
+#     processTypes = ["LLNuNu"], # can include "LLNuNu", "ElMuNuNu", "PhotonJets" 
+#     selectPairLLNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>60.0 and x.leg1.mass()<180.0 and x.leg2.pt()>0.0),
+#     selectPairElMuNuNu = (lambda x: x.leg1.pt()>20.0 and x.leg1.mass()>30.0 and x.leg1.mass()<300.0 and x.leg2.pt()>0.0),
+#     selectPhotonJets = (lambda x: x.leg1.pt()>20.0 and x.leg2.pt()>50.0),
+#     suffix = '',
+#     )
 
 # Create flags for MET filter bits
 """followed by the MET filters recommendations from
@@ -267,31 +294,59 @@ triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
     triggerBits = {
+        # Onia
+        "jpsi2mu" : triggers_jpsi2mu,
+        "upsilon2mu" : triggers_upsilon2mu,
+        # Triples
+        "3mu" : triggers_3mu,
     }
     )
 
 dumpEvents = cfg.Analyzer(
-    XZZDumpEvtList, name="XZZDumpEvtList",
+    BPH4lDumpEvtList, name="BPH4lDumpEvtList",
     )
 
+vvSkimmer = cfg.Analyzer(
+    Skimmer,
+    name='vvSkimmer',
+    #required = ['LLNuNu', 'ElMuNuNu']
+    required = ['LLNuNu']
+)
 
-################
-coreSequence = [
+leptonSkimmer = cfg.Analyzer(
+    Skimmer,
+    name='leptonSkimmer',
+    required = ['inclusiveLeptons']
+)
+
+
+###########################
+# Core sequence of all common modules
+###########################
+
+bph4lPreSequence = [
     skimAnalyzer,
-    genAna,
     jsonAna,
     triggerAna,
+]
+
+bph4lObjSequence = [
+    genAna,
     pileUpAna,
     vertexAna,
     lepAna,
     jetAna,
     metAna,
-    photonAna,
-    leptonicVAna,
-#    packedAna,
-    multiStateAna,
-    eventFlagsAna,
-#    triggerFlagsAna
+    #eventFlagsAna, # for MET
+    triggerFlagsAna,
+]
+
+bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [   
+    lepCombAna,
+    #multiStateAna,
+    #leptonSkimmer,
+    MuonTreeProducer,
+    #packedAna,
 ]
 
 ###################

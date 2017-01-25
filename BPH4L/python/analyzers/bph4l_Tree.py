@@ -1,20 +1,7 @@
-from CMGTools.BPH4L.analyzers.AutoFillTreeProducer  import * 
-from CMGTools.BPH4L.analyzers.bph4lTypes  import * 
-from CMGTools.BPH4L.analyzers.Skimmer  import * 
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-vvSkimmer = cfg.Analyzer(
-    Skimmer,
-    name='vvSkimmer',
-    #required = ['LLNuNu', 'ElMuNuNu']
-    required = ['LLNuNu']
-)
-
-leptonSkimmer = cfg.Analyzer(
-    Skimmer,
-    name='leptonSkimmer',
-    required = ['inclusiveLeptons']
-)
+from CMGTools.BPH4L.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.BPH4L.analyzers.bph4lTypes  import * 
 
 MuonTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='MuonTreeProducer',

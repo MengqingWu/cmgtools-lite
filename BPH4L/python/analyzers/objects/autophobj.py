@@ -1,4 +1,7 @@
 #!/bin/env python
+
+# original from PhysicsTools/Heppy/python/analyzers/objects/autophobj.py
+
 from math import *
 import ROOT
 #from CMGTools.TTHAnalysis.signedSip import *
