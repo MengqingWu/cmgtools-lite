@@ -2,9 +2,9 @@ import os
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
-from PhysicsTools.Heppy.analyzers.gen.all import *
+from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
 from PhysicsTools.HeppyCore.utils.deltar import *
-from CMGTools.BPH4L.analyzers.Skimmer import *
+#from CMGTools.BPH4L.analyzers.Skimmer import *
 from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 from CMGTools.BPH4L.analyzers.PackedCandidateLoader import *
 #from CMGTools.BPH4L.analyzers.BPH4lMultiFinalState  import *
@@ -18,6 +18,9 @@ from CMGTools.BPH4L.analyzers.BPH4lVertexAnalyzer import *
 from CMGTools.BPH4L.analyzers.BPH4lDumpEvtList import *
 from CMGTools.BPH4L.analyzers.BPH4lJetAnalyzer import *
 #from CMGTools.BPH4L.analyzers.BPH4lPhotonAnalyzer import *
+from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
+
+from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 
 ###########################
 # define analyzers
@@ -55,6 +58,26 @@ pileUpAna = cfg.Analyzer(
 #     verbose = False,
 #     filter = "None",
 #     )
+
+# Gen Info Analyzer (generic):
+genAna = cfg.Analyzer(
+    GeneratorAnalyzer, name="GeneratorAnalyzer",
+    # BSM particles that can appear with status <= 2 and should be kept
+    stableBSMParticleIds = [], #[ 1000022 ],
+    # Particles of which we want to save the pre-FSR momentum (a la status 3).
+    # Note that for quarks and gluons the post-FSR doesn't make sense,
+    # so those should always be in the list
+    savePreFSRParticleIds = [], #[ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    # Make also the list of all genParticles, for other analyzers to handle
+    makeAllGenParticles = True,
+    # Make also the splitted lists
+    makeSplittedGenLists = True,
+    allGenTaus = False,
+    # Save LHE weights from LHEEventProduct
+    makeLHEweights = True,
+    # Print out debug information
+    verbose = False,
+)
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -102,24 +125,6 @@ lepAna = cfg.Analyzer(
     doElectronScaleCorrections = None,
     )
 
-# multtrg = cfg.Analyzer(
-#     BPH4lMultTrgEff, name="multitrigger",
-#     HLTlist=[
-#         'HLT_Ele105_CaloIdVT_GsfTrkIdT',
-#         'HLT_Ele115_CaloIdVT_GsfTrkIdT',
-#         'HLT_Mu45_eta2p1',
-#         'HLT_Mu50',
-#         'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ',
-#         'HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ',
-#         'HLT_Ele23_WPLoose_Gsf',
-#         'HLT_Ele22_eta2p1_WP75_Gsf',
-#         'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ',
-#         'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ',
-#         'HLT_IsoMu20',
-#         'HLT_IsoTkMu20',
-#         'HLT_IsoMu27',
-#         ],
-# )
 
 # ## Photon Analyzer (generic)
 # photonAna = cfg.Analyzer(
@@ -204,6 +209,27 @@ jetAna = cfg.Analyzer(
 #     collectionPostFix = "",
 #     )
 
+## MET Analyzer (generic):
+metAna = cfg.Analyzer(
+    METAnalyzer, name="metAnalyzer",
+    metCollection     = "slimmedMETs",
+    noPUMetCollection = "slimmedMETs",    
+    copyMETsByValue = False,
+    doTkMet = False,
+    doMetNoPU = False,
+    doMetNoMu = False,
+    doMetNoEle = False,
+    doMetNoPhoton = False,
+    recalibrate = False, #"type1", # or "type1", or True
+    applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
+    old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
+    jetAnalyzerPostFix = "",
+    candidates='packedPFCandidates',
+    candidatesTypes='std::vector<pat::PackedCandidate>',
+    dzMax = 0.1,
+    collectionPostFix = "",
+    )
+
 
 lepCombAna = cfg.Analyzer(
     BPH4lLepCombMaker,
@@ -265,6 +291,11 @@ triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
     triggerBits = {
+        # Onia
+        "jpsi2mu" : triggers_jpsi2mu,
+        "upsilon2mu" : triggers_upsilon2mu,
+        # Triples
+        "3mu" : triggers_3mu,
     }
     )
 
@@ -273,23 +304,31 @@ dumpEvents = cfg.Analyzer(
     )
 
 
-################
-coreSequence = [
+################ Core sequence of all common modules
+
+bph4lPreSequence = [
     skimAnalyzer,
-    #genAna,
     jsonAna,
     triggerAna,
+]
+
+bph4lObjSequence = [
+    genAna,
     pileUpAna,
     vertexAna,
     lepAna,
     jetAna,
-#    metAna,
-#    photonAna,
+    metAna,
+    #eventFlagsAna, # for MET
+    triggerFlagsAna,
+]
+
+bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [   
     lepCombAna,
-#    packedAna,
-#    multiStateAna,
-    eventFlagsAna,
-#    triggerFlagsAna
+    leptonSkimmer,
+    MuonTreeProducer,
+    #packedAna,
+    #multiStateAna,
 ]
 
 ###################

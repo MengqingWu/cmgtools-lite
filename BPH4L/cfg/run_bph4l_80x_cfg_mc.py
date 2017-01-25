@@ -44,7 +44,8 @@ coreSequence = [
 #print "[debug]: coreSequence ==> ", coreSequence
 #sequence = cfg.Sequence(coreSequence)
 #sequence = cfg.Sequence(coreSequence+[vvSkimmer,fullTreeProducer])
-sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
+#sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
+sequence = cfg.Sequence(bph4lCoreSequence)
 #print "[debug]: sequence ==>", sequence
 
 #-------- HOW TO RUN
