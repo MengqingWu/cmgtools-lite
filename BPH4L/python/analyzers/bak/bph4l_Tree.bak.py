@@ -19,12 +19,16 @@ bph4l_globalObjects = {
 }
 
 bph4l_collections = {
-    "MuFour"        : NTupleCollection("mu4", MuFourType, 5, help="4-mu combination"),
-    # # ---------------
-    "jets_raw"   : NTupleCollection("jet", jetType,15, help="all jets from miniAOD"),
-    "selectedMuons" : NTupleCollection("mu", MuonType, 10, help="selected Muons"),
-    #"selectedLeptons" : NTupleCollection("lep",leptonTypeExtra, 10, help="selected leptons"),
-    "genleps" : NTupleCollection("genlep", genParticleType, 10, help="generated leptons from direct decays"),
+    "bestFourLeptonsSignal"  : NTupleCollection("zz",    ZZType, 1, help="Four Lepton Candidates"),    
+    "bestFourLeptons2P2F"    : NTupleCollection("zz2P2F",ZZType, 8, help="Four Lepton Candidates 2Pass 2 Fail"),    
+    "bestFourLeptons3P1F"    : NTupleCollection("zz3P1F",ZZType, 8, help="Four Lepton Candidates 3 Pass 1 Fail"),   
+    "bestFourLeptonsSS"      : NTupleCollection("zzSS",  ZZType, 8, help="Four Lepton Candidates SS"),   
+    "bestFourLeptonsRelaxIdIso" : NTupleCollection("zzRelII",  ZZType, 8, help="Four Lepton Candidates (relax id, iso)"),   
+    # ---------------
+    "selectedLeptons" : NTupleCollection("Lep",    leptonTypeHZZ, 20, help="Leptons after the preselection"),
+    "cleanJets"       : NTupleCollection("Jet",     jetTypeExtra, 20, help="Cental jets after full selection and cleaning, sorted by pt"),
+    "discardedJets"   : NTupleCollection("DiscJet", jetTypeExtra,  5, help="Jets discarded in the jet-lepton cleaning"),
+    "fsrPhotonsNoIso" : NTupleCollection("FSR",    fsrPhotonTypeHZZ, 20, help="Photons for FSR recovery (isolation not applied)"),
 }
 
 
@@ -36,14 +40,21 @@ MuonTreeProducer = cfg.Analyzer(
      vectorTree = True,
      saveTLorentzVectors = True,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
-     globalVariables = bph4l_globalVariables,
-     globalObjects =  bph4l_globalObjects,
-     collections = bph4l_collections,
+     globalVariables = bph4l_globalVariables
+     globalObjects =  {
+         #"met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, with 76X type 1 corrections"),
+         #"met_miniAod" : NTupleObject("met", metType, help="PF E_{T}^{miss} stored in miniAOD"),
+     },
+     collections = {
+         #"LL"  : NTupleCollection("Zll",LLType,5, help="Z to ll"),
+         #"ElMu" : NTupleCollection("elmu",LLType,5, help="electron - muon pair for non-resonant bkg"),
+         #"selectedLeptons" : NTupleCollection("lep",leptonTypeExtra, 10, help="selected leptons"),
+         "selectedMuons" : NTupleCollection("mu", MuonType, 10, help="selected Muons"),
+         "MuFour"        : NTupleCollection("mu4", MuFourType, 5, help="4-mu combination"),
+         #"genLeptons" : NTupleCollection("genLep", genParticleType, 10, help="Generated leptons (e/mu) from W/Z decays"),
+         "jets_raw"   : NTupleCollection("jet", jetType,15, help="all jets from miniAOD"),
+     }
 )
-
-
-
-#####---> Stale treeProducers from XZZ <---#####
 
 leptonTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='leptonTreeProducer',
