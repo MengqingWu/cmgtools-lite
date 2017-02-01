@@ -1,6 +1,7 @@
 #!/bin/env python
 
 # original from PhysicsTools/Heppy/python/analyzers/objects/autophobj.py
+# out of date fromt the latest version from Heppy @ Jan-26-2017
 
 from math import *
 import ROOT
@@ -32,7 +33,7 @@ fourVectorType = NTupleObjectType("fourVector", variables = [
     #NTupleVariable("py",    lambda x : x.py()),
     #NTupleVariable("pz",    lambda x : x.pz()),
     NTupleVariable("eta",   lambda x : x.eta()),
-    NTupleVariable("rapidity",   lambda x : x.rapidity()),
+    #NTupleVariable("rapidity",   lambda x : x.rapidity()),
     NTupleVariable("phi",   lambda x : x.phi()),
     NTupleVariable("mass",  lambda x : x.mass()),
     NTupleVariable("p4",    lambda x : x, "TLorentzVector", default=ROOT.reco.Particle.LorentzVector(0.,0.,0.,0.), filler = lambda vector, obj: vector.SetPtEtaPhiM(obj.pt(), obj.eta(), obj.phi(), obj.mass())),
@@ -317,6 +318,7 @@ metType = NTupleObjectType("met", baseObjectTypes = [ fourVectorType ], variable
 genParticleType = NTupleObjectType("genParticle", baseObjectTypes = [ particleType ], mcOnly=True, variables = [
     NTupleVariable("charge",   lambda x : x.threeCharge()/3.0, float),
     NTupleVariable("status",   lambda x : x.status(),int),
+    NTupleVariable("isPromptHard", lambda x : getattr(x,"promptHardFlag",0), int)
 ])
 genParticleWithMotherInfo = NTupleObjectType("genParticleWithMotherInfo", baseObjectTypes = [ genParticleType ], mcOnly=True, variables = [
     NTupleVariable("isLastCopyBeforeFSR", lambda x : x.isLastCopyBeforeFSR(), int, help="isLastCopyBeforeFSR"),
@@ -339,8 +341,9 @@ genParticleWithMotherId = NTupleObjectType("genParticleWithMotherId", baseObject
     NTupleVariable("grandmotherId", lambda x : x.mother(0).mother(0).pdgId() if x.mother(0) and x.mother(0).mother(0) else 0, int, help="pdgId of the grandmother of the particle")
 ])
 genParticleWithAncestryType = NTupleObjectType("genParticleWithAncestry", baseObjectTypes = [ genParticleType ], mcOnly=True, variables = [
-    NTupleVariable("motherId", lambda x : x.motherId, int, help="pdgId of the mother of the particle"),
-    NTupleVariable("grandmotherId", lambda x : x.grandmotherId, int, help="pdgId of the grandmother of the particle"),
+    NTupleVariable("motherId", lambda x : x.mother(0).pdgId() if x.mother(0) else 0, int, help="pdgId of the mother of the particle"),
+    # NTupleVariable("grandmotherId", lambda x : x.grandmotherId, int, help="pdgId of the grandmother of the particle"),
+    NTupleVariable("grandmotherId", lambda x : x.mother(0).mother(0).pdgId() if x.mother(0) and x.mother(0).mother(0) else 0, int, help="pdgId of the grandmother of the particle"),
     NTupleVariable("sourceId", lambda x : x.sourceId, int, help="origin of the particle (heaviest ancestor): 6=t, 25=h, 23/24=W/Z"),
 ])
 genParticleWithLinksType = NTupleObjectType("genParticleWithLinks", baseObjectTypes = [ genParticleWithAncestryType ], mcOnly=True, variables = [

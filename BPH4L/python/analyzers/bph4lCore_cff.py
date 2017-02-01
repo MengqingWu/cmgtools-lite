@@ -3,7 +3,8 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 
 from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
-from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
+#from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
+from CMGTools.BPH4L.analyzers.core.GeneratorAnalyzer import *
 from PhysicsTools.HeppyCore.utils.deltar import *
 
 from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
@@ -17,6 +18,7 @@ from CMGTools.BPH4L.analyzers.objects.BPH4lJetAnalyzer import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lGenAnalyzer import *
 #from CMGTools.BPH4L.tools.leptonID  import *
 
+from CMGTools.HToZZ4L.analyzers.TwoLeptonAnalyzer import TwoLeptonAnalyzer
 from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lMultiFinalState  import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lMultTrgEff import *
@@ -55,11 +57,11 @@ pileUpAna = cfg.Analyzer(
     )
 
 
-# ## Gen Info Analyzer 
-# genAna = cfg.Analyzer(
+## Gen Info Analyzer 
+# bph4lGenAna = cfg.Analyzer(
 #     BPH4lGenAnalyzer, name="BPH4lGenAnalyzer",
 #     # Print out debug information
-#     verbose = False,
+#     verbose = True,
 #     filter = "None",
 #     )
 
@@ -71,7 +73,7 @@ genAna = cfg.Analyzer(
     # Particles of which we want to save the pre-FSR momentum (a la status 3).
     # Note that for quarks and gluons the post-FSR doesn't make sense,
     # so those should always be in the list
-    savePreFSRParticleIds = [], #[ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
     # Make also the splitted lists
@@ -80,7 +82,7 @@ genAna = cfg.Analyzer(
     # Save LHE weights from LHEEventProduct
     makeLHEweights = True,
     # Print out debug information
-    verbose = False,
+    verbose = True,
 )
 
 # Select a list of good primary vertices (generic)
@@ -128,6 +130,17 @@ lepAna = cfg.Analyzer(
     # },
     doElectronScaleCorrections = None,
     )
+
+
+from CMGTools.BPH4L.analyzers.objects.ElectronMuonCleaner import ElectronMuonCleaner
+## remove electrons mis-reconstructed from a muon trajectory (tight Mu required)
+## analyzer origin: HToZZ4L/python/analyzers/ElectronMuonCleaner.py @Jan-31-2017
+eleMuClean = cfg.Analyzer(
+    ElectronMuonCleaner, name='eleMuClean',
+    selectedMuCut = lambda mu : mu.tightId(), #isPFMuon() or mu.isGlobalMuon(),
+    otherMuCut    = lambda mu : False, # (mu.isPFMuon() or mu.isGlobalMuon()) and muon.muonBestTrackType() != 2, # uncomment to include also muons with sip > 4
+    mustClean = lambda ele, mu, dr: dr < 0.05
+)
 
 # ## Photon Analyzer (generic)
 # photonAna = cfg.Analyzer(
@@ -318,6 +331,16 @@ leptonSkimmer = cfg.Analyzer(
     EventSkimmer,
     name='leptonSkimmer',
     required = ['inclusiveLeptons']
+)
+
+twoLeptonEventSkimmerOnia = cfg.Analyzer(
+    EventSkimmer, name="twoLeptonEventSkimmerOnia",
+    required = ['onia']
+)
+
+twoLeptonAnalyzerOnia = cfg.Analyzer(
+    TwoLeptonAnalyzer, name="twoLeptonAnalyzerOnia",
+    mode = "Onia"
 )
 
 

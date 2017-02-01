@@ -8,7 +8,8 @@ class DiObject( TLorentzVector ):
     def __init__(self, leg1, leg2,doSort = True):
         if (leg2.pt() > leg1.pt()) and doSort:
             leg2, leg1 = leg1, leg2
-        lv = leg1.p4WithFSR() + leg2.p4WithFSR()
+        #lv = leg1.p4WithFSR() + leg2.p4WithFSR()
+        lv = leg1.p4() + leg2.p4()
         super( DiObject, self).__init__( lv.Px(), lv.Py(), lv.Pz(), lv.E() )
         self.leg1 = leg1
         self.leg2 = leg2
@@ -45,10 +46,10 @@ class DiObject( TLorentzVector ):
     def daughterLeptons(self):
         return [self.leg1,self.leg2]
 
-    def daughterPhotons(self):
-        return self.leg1.ownFsrPhotons + self.leg2.ownFsrPhotons
+    # def daughterPhotons(self):
+    #     return self.leg1.ownFsrPhotons + self.leg2.ownFsrPhotons
 
-    def hasFSR(self):
-        return self.daughterPhotons() != [] 
+    # def hasFSR(self):
+    #     return self.daughterPhotons() != [] 
 
    

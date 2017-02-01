@@ -5,6 +5,8 @@ from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
 from CMGTools.BPH4L.tools.Pair import Pair
 import math
 
+from DataFormats.FWLite import Events, Handle
+
 class BPH4lGenAnalyzer( Analyzer ):
     """ Only select X->ZZ->2l2nu events
 
@@ -19,11 +21,11 @@ class BPH4lGenAnalyzer( Analyzer ):
         super(BPH4lGenAnalyzer, self).declareHandles()
         self.mchandles['prunedGenParticles'] = AutoHandle( 'prunedGenParticles', 'std::vector<reco::GenParticle>' )
         self.mchandles['packedGenParticles'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
-        self.mchandles['LHEinfo'] = AutoHandle('externalLHEProducer',
-                                                  'LHEEventProduct',
-                                                  mayFail=True,
-                                                  fallbackLabel='source',
-                                                  lazy=False )
+        # self.mchandles['LHEinfo'] = AutoHandle('externalLHEProducer',
+        #                                           'LHEEventProduct',
+        #                                           mayFail=True,
+        #                                           fallbackLabel='source',
+        #                                           lazy=False )
                
     def beginLoop(self,setup):
         super(BPH4lGenAnalyzer,self).beginLoop(setup)
@@ -75,8 +77,10 @@ class BPH4lGenAnalyzer( Analyzer ):
         #        elif abs(dauid) in range(7):
         #            event.genJets.append(dau)
 
-        event.genMuons = [ p for p in pruned if abs(p.pdgId())==13 and  p.status()==1 and p.isPromptFinalState() and p.fromHardProcessFinalState() ]
-        event.genElectrons = [ p for p in pruned if abs(p.pdgId())==11 and  p.status()==1 and p.isPromptFinalState() and p.fromHardProcessFinalState() ]
+        #event.genMuons = [ p for p in pruned if abs(p.pdgId())==13 and  p.status()==1 and p.isPromptFinalState() and p.fromHardProcessFinalState() ]
+        #event.genElectrons = [ p for p in pruned if abs(p.pdgId())==11 and  p.status()==1 and p.isPromptFinalState() and p.fromHardProcessFinalState() ]
+        event.genMuons = [ p for p in pruned if abs(p.pdgId())==13 and  p.status()<=2 ]
+        event.genElectrons = [ p for p in pruned if abs(p.pdgId())==11 and  p.status()<=2 ]
         #event.genTaus = [ p for p in pruned if abs(p.pdgId())==15 and p.status()==2  and p.isPromptDecayed() ]
         event.genTaus = [ p for p in pruned if abs(p.pdgId())==15 and p.status()==2  and p.isPromptDecayed() and p.fromHardProcessDecayed() ]
         event.genNeutrinos = [ p for p in pruned if (abs(p.pdgId()) in [12,14,16]) and p.isPromptFinalState() and p.fromHardProcessFinalState() ]
@@ -146,16 +150,16 @@ class BPH4lGenAnalyzer( Analyzer ):
             print "N gen Leptons: "+str(len(event.genLeptons))
             print "N gen neutrinos: "+str(len(event.genNeutrinos))
 
-        # get n partons info
-        event.lheNb = 0
-        event.lheNj = 0
-        lheEvent = self.mchandles['LHEinfo'].product().hepeup();
-        lheParticles = lheEvent.PUP;
-        for idxParticle in range(len(lheParticles)):
-            idx = abs(lheEvent.IDUP[idxParticle])
-            status = lheEvent.ISTUP[idxParticle]
-            if status == 1 and idx==5:  event.lheNb += 1
-            if status == 1 and ((idx >= 1 and idx <= 6) or idx == 21) : event.lheNj += 1
+        # # get n partons info
+        # event.lheNb = 0
+        # event.lheNj = 0
+        # lheEvent = self.mchandles['LHEinfo'].product().hepeup();
+        # lheParticles = lheEvent.PUP;
+        # for idxParticle in range(len(lheParticles)):
+        #     idx = abs(lheEvent.IDUP[idxParticle])
+        #     status = lheEvent.ISTUP[idxParticle]
+        #     if status == 1 and idx==5:  event.lheNb += 1
+        #     if status == 1 and ((idx >= 1 and idx <= 6) or idx == 21) : event.lheNj += 1
               
 
     def process(self, event):

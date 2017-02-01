@@ -31,10 +31,25 @@ bph4l_collections = {
 #***********************************
 # TreeProducer definitions 
 #***********************************
+twoLeptonTreeProducerOnia = cfg.Analyzer(
+     AutoFillTreeProducer, name='twoLeptonTreeProducerOnia',
+     vectorTree = True,
+     saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
+     globalVariables = [v for v in bph4l_globalVariables if "Jet" not in v.name ], # rho, nvertices, njets
+     globalObjects = [], # hzz_globalObjects, 
+     collections = {
+         "onia"       : NTupleCollection("Onia",   ZTypeLite, 20, help="Dilepton Candidates"),
+         "genleps"    : NTupleCollection("genlep", genParticleWithAncestryType, 10, help="generated leptons from direct decays"),
+         #"genParticles"    : NTupleCollection("genAll", genParticleWithMotherId, 10, help="generated leptons from direct decays"),
+         #"selectedLeptons" : NTupleCollection("Lep", leptonTypeHZZ, 10, help="Leptons after the preselection"),
+     },
+     defaultFloatType = 'F',
+)
+
 MuonTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='MuonTreeProducer',
      vectorTree = True,
-     saveTLorentzVectors = True,  # can set to True to get also the TLorentzVectors, but trees will be bigger
+     saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
      globalVariables = bph4l_globalVariables,
      globalObjects =  bph4l_globalObjects,
@@ -42,8 +57,9 @@ MuonTreeProducer = cfg.Analyzer(
 )
 
 
-
+#***********************************
 #####---> Stale treeProducers from XZZ <---#####
+#***********************************
 
 leptonTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='leptonTreeProducer',
