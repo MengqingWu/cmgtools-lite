@@ -8,7 +8,7 @@ from PhysicsTools.Heppy.physicsutils.genutils import isNotFromHadronicShower, re
 
 def interestingPdgId(id,includeLeptons=False):        
     id = abs(id)
-    return id in [6,7,8,17,18] or (includeLeptons and 11 <= id and id < 16) or (22 <= id and id < 40) or id > 1000000
+    return id in [6,7,8,17,18] or (includeLeptons and 11 <= id and id < 16) or (22 <= id and id < 40) or id > 1000000 or (id in [443, 100443, 553, 100553, 200553])
 
 class GeneratorAnalyzer( Analyzer ):
     """Save the hard-scattering final state of the event: top quarks, gauge & higgs bosons and BSM
@@ -54,6 +54,7 @@ class GeneratorAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(GeneratorAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.stableBSMParticleIds  = set(cfg_ana.stableBSMParticleIds) # neutralinos and such
+        self.saveMesonParticleIds  = set(cfg_ana.saveMesonParticleIds)
         self.savePreFSRParticleIds = set(cfg_ana.savePreFSRParticleIds)
         self.makeAllGenParticles   = cfg_ana.makeAllGenParticles
         self.makeSplittedGenLists  = cfg_ana.makeSplittedGenLists
@@ -68,18 +69,26 @@ class GeneratorAnalyzer( Analyzer ):
 
     def makeMCInfo(self, event):
         verbose = getattr(self.cfg_ana, 'verbose', False)
+        printPdgId = getattr(self.cfg_ana, 'printPdgId', 0) # the particle to check - debug
         rawGenParticles = self.mchandles['genParticles'].product() 
         good = []; keymap = {};
         allGenParticles = []
+
         for rawIndex,p in enumerate(rawGenParticles):
             if self.makeAllGenParticles: allGenParticles.append(p)
             id     = abs(p.pdgId())
             status = p.status()
+
+            mydebug = True if verbose and id==printPdgId else False
+            if mydebug: print "[debug]  pdgId = %d" % (id)
+
             # particles must be status > 2, except for prompt leptons, photons, neutralinos
             if status <= 2:
                 if ((id not in self.stableBSMParticleIds) and
-                    (id not in [11,12,13,14,15,16,22])): # modified as JPsi decay products were filtered @Feb-01-2017
+                    (id not in [11,12,13,14,15,16,22])    and
+                    (id not in self.saveMesonParticleIds)): # modified as JPsi decay products were filtered @Feb-01-2017
                     #(id not in [11,12,13,14,15,16,22] or not isNotFromHadronicShower(p))):
+                        if mydebug: print "         fail status"
                         continue
 
             # a particle must not be decaying into itself
@@ -90,12 +99,12 @@ class GeneratorAnalyzer( Analyzer ):
             if id in self.savePreFSRParticleIds:
                 # for light objects, we want them pre-radiation
                 if any((p.mother(j).pdgId() == p.pdgId()) for j in xrange(p.numberOfMothers())):
-                    #print "    fail auto-decay" 
+                    if mydebug: print "    fail auto-decay" 
                     continue
             else:
                 # everything else, we want it after radiation, i.e. just before decay
                 if any((p.daughter(j).pdgId() == p.pdgId() and p.daughter(j).status() > 2) for j in xrange(p.numberOfDaughters())):
-                    #print "    fail auto-decay" 
+                    if mydebug: print "    fail auto-decay" 
                     continue
             # FIXME find a better criterion to discard there
             if status == 71: 
@@ -106,6 +115,9 @@ class GeneratorAnalyzer( Analyzer ):
             if interestingPdgId(id):
                 #print "    pass pdgId"
                 ok = True
+
+            if mydebug: print "       %s interesting pdgId" % ("pass" if ok else "fail")
+
             ### no: we don't select by decay, so that we keep the particle summary free of incoming partons and such
             # if not ok and any(interestingPdgId(d.pdgId()) for d in realGenDaughters(p)):
             #    #print "    pass dau"
@@ -113,18 +125,21 @@ class GeneratorAnalyzer( Analyzer ):
             if not ok:
               for mom in realGenMothers(p):
                 if interestingPdgId(mom.pdgId()) or (getattr(mom,'rawIndex',-1) in keymap):
-                    #print "    interesting mom" 
+                    if mydebug: print "        interesting mom"
+
                     # exclude extra x from p -> p + x
                     if not any(mom.daughter(j2).pdgId() == mom.pdgId() for j2 in xrange(mom.numberOfDaughters())):
-                        #print "         pass no-self-decay"
+                        if mydebug: print "         pass no-self-decay"
                         ok = True
                     # Account for generator feature with Higgs decaying to itself with same four-vector but no daughters
                     elif mom.pdgId() == 25 and any(mom.daughter(j2).pdgId() == 25 and mom.daughter(j2).numberOfDaughters()==0 for j2 in range(mom.numberOfDaughters())):
+                        if mydebug: print "         pass: higgs decaying to itself w/ same four-vector but no daughters"
                         ok = True
                 if abs(mom.pdgId()) == 15:
                     # if we're a tau daughter we're status 2
                     # if we passed all the previous steps, then we're a prompt lepton
                     # so we'd like to be included
+                    if mydebug: print "       pass: prompt tau"
                     ok = True
                 if not ok and p.pt() > 10 and id in [1,2,3,4,5,21,22] and any(interestingPdgId(d.pdgId()) for d in realGenDaughters(mom)):
                     # interesting for being a parton brother of an interesting particle (to get the extra jets in ME+PS)
@@ -135,6 +150,8 @@ class GeneratorAnalyzer( Analyzer ):
                 if not ok and id in [11, 13] and abs(mom.pdgId()) in [443, 100443, 553, 100553, 200553]:
                     # Lepton from J/Psi(1s) or Upsilon (1s, 2s)
                     ok = True
+
+            if mydebug: print "       ==> %s" % ("Save!" if ok else "Discard!")
                     
             if ok:
                 gp = p
@@ -188,6 +205,7 @@ class GeneratorAnalyzer( Analyzer ):
             event.genParticles = allGenParticles
 
         if self.makeSplittedGenLists:
+            event.genMesons      = [] # for bph4l
             event.genHiggsBosons = []
             event.genVBosons     = []
             event.gennus         = []
@@ -207,6 +225,8 @@ class GeneratorAnalyzer( Analyzer ):
                     event.genHiggsBosons.append(p)
                 elif id in {23,24}:
                     event.genVBosons.append(p)
+                elif id in {443, 100443, 553, 100553, 200553}: # for bph4l
+                    event.genMesons.append(p)
                 elif id in {12,14,16}:
                     event.gennus.append(p)
 

@@ -9,7 +9,11 @@ class TwoLeptonAnalyzer( Analyzer ):
         super(TwoLeptonAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.mode = cfg_ana.mode
         if self.mode not in [ "Z", "Onia" ]: raise RuntimeError, "Unsupported mode"
-
+        self.muonId = getattr(cfg_ana, "muonId", "POG_ID_Soft")
+        self.electronId = getattr(cfg_ana, "electronId", "POG_MVA_ID_NonTrig")
+        self.oniaMassMin = getattr(cfg_ana, "oniaMassMin", 2.5) # inclusive range as default
+        self.oniaMassMax = getattr(cfg_ana, "oniaMassMax", 12) # inclusive range as default
+        
     def beginLoop(self, setup):
         super(TwoLeptonAnalyzer,self).beginLoop(setup)
         self.counters.addCounter('TwoLepton')
@@ -26,11 +30,12 @@ class TwoLeptonAnalyzer( Analyzer ):
         self.readCollections( event.input )
 
         self.counters.counter('TwoLepton').inc('all events')
-        # count tight leptons
-        tight_leptons = [ lep for lep in event.selectedLeptons if self.leptonID_tight(lep) ]
-
+        # count leptons w/ ID required (cfg_ana):
+        #tight_leptons = [ lep for lep in event.selectedLeptons if self.leptonID_tight(lep) ]
+        lepCandidates = [ lep for lep in event.selectedLeptons if self.leptonID(lep)]
+        
         # make dilepton pairs, possibly attach FSR photons (the latter not yet implemented)
-        event.allPairs = self.findOSSFPairs(tight_leptons, []) #event.fsrPhotons)
+        event.allPairs = self.findOSSFPairs(lepCandidates, []) #event.fsrPhotons)
 
         # count them, for the record
         for p in event.allPairs:
@@ -49,10 +54,16 @@ class TwoLeptonAnalyzer( Analyzer ):
             event.bestIsoZ = sortedIsoPairs[:1] # pick at most 1
             if len(event.bestIsoZ):
                 self.counters.counter('TwoLepton').inc('best Z')
+                
         elif self.mode == "Onia":
             event.onia = filter(self.oniaMassFilter, event.allPairs)
             if event.onia: self.counters.counter('TwoLepton').inc('pass onia')
 
+    def leptonID(self, lepton):
+        if abs(lepton.pdgId())==11: return lepton.muonID(self.muonId)
+        elif abs(lepton.pdgId())==13: return lepton.electronID(self.electronId)
+        else: return self.leptonID_tight(lepton)
+            
     def leptonID_tight(self,lepton):
         return lepton.tightId()
 
@@ -95,5 +106,5 @@ class TwoLeptonAnalyzer( Analyzer ):
         return out
 
     def oniaMassFilter(self,twoLepton):
-        return twoLepton.mll() > 2.5 and twoLepton.mll() < 12
+        return twoLepton.mll() > self.oniaMassMin and twoLepton.mll() < self.oniaMassMax
 

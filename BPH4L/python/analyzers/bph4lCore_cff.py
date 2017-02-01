@@ -37,6 +37,9 @@ skimAnalyzer = cfg.Analyzer(
     useLumiBlocks = False,
     )
 
+from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
+
+
 # Apply json file (if the dataset has one)
 # which will filter evts according to the Json
 jsonAna = cfg.Analyzer(
@@ -74,6 +77,8 @@ genAna = cfg.Analyzer(
     # Note that for quarks and gluons the post-FSR doesn't make sense,
     # so those should always be in the list
     savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    # save mesons if you want:
+    saveMesonParticleIds = [443, 100443, 553, 100553, 200553],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
     # Make also the splitted lists
@@ -82,7 +87,8 @@ genAna = cfg.Analyzer(
     # Save LHE weights from LHEEventProduct
     makeLHEweights = True,
     # Print out debug information
-    verbose = True,
+    verbose = False,
+    printPdgId = 443, # info print only with verbose on
 )
 
 # Select a list of good primary vertices (generic)
@@ -204,29 +210,9 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True }, # numbers for AK4CHS jets
     )
 
-# metAna = cfg.Analyzer(
-#     BPH4lMETAnalyzer, name="metAnalyzer",
-#     metCollection     = "slimmedMETs",
-#     noPUMetCollection = "slimmedMETs",
-#     copyMETsByValue = False,
-#     doTkMet = False,
-#     doMetNoPU = False,
-#     doMetNoMu = False,
-#     doMetNoEle = False,
-#     doMetNoPhoton = False,
-#     recalibrate = False, # or "type1", or True, or False
-#     doMetShiftFromJEC = False, # only works with recalibrate on
-#     applyJetSmearing = False, # not change the final met used in multiStateAna, does nothing unless the jet smearing turned on in jetAna for MC, copy self.met for data
-#     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
-#     jetAnalyzerPostFix = "",
-#     candidates='packedPFCandidates',
-#     candidatesTypes='std::vector<pat::PackedCandidate>',
-#     dzMax = 0.1,
-#     collectionPostFix = "",
-#     )
-
 ## MET Analyzer (generic):
 metAna = cfg.Analyzer(
+    #     BPH4lMETAnalyzer, name="metAnalyzer",
     METAnalyzer, name="metAnalyzer",
     metCollection     = "slimmedMETs",
     noPUMetCollection = "slimmedMETs",    
@@ -286,18 +272,10 @@ eventFlagsAna = cfg.Analyzer(
     triggerBits = {
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
-        #"CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
-        #"hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
-        #"trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
-        # "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
-        # "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
-        # "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
-        # "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
-        # "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "METFilters" : [ "Flag_METFilters" ],
     }
@@ -333,15 +311,23 @@ leptonSkimmer = cfg.Analyzer(
     required = ['inclusiveLeptons']
 )
 
+# Mu ID names: https://cmssdt.cern.ch/SDT/doxygen/CMSSW_8_0_25/doc/html/df/d34/Muon_8py_source.html
+# El ID names: https://cmssdt.cern.ch/SDT/doxygen/CMSSW_8_0_25/doc/html/d4/d14/classElectron_1_1Electron.html#a64e70079227d13bbc89688eb5efd09b5
+# FIXME -- El ID not updated, please refer to: https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2 
+twoLeptonAnalyzerOnia = cfg.Analyzer(
+    TwoLeptonAnalyzer, name="twoLeptonAnalyzerOnia",
+    mode = "Onia",
+    muonID = "POG_ID_Soft",
+    electronID = "POG_MVA_ID_NonTrig", #FIXME: random choice
+    oniaMassMin = 2.5,
+    oniaMassMax = 3.8,
+)
+
 twoLeptonEventSkimmerOnia = cfg.Analyzer(
     EventSkimmer, name="twoLeptonEventSkimmerOnia",
     required = ['onia']
 )
 
-twoLeptonAnalyzerOnia = cfg.Analyzer(
-    TwoLeptonAnalyzer, name="twoLeptonAnalyzerOnia",
-    mode = "Onia"
-)
 
 
 ###########################

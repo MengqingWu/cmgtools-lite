@@ -38,9 +38,10 @@ twoLeptonTreeProducerOnia = cfg.Analyzer(
      globalVariables = [v for v in bph4l_globalVariables if "Jet" not in v.name ], # rho, nvertices, njets
      globalObjects = [], # hzz_globalObjects, 
      collections = {
-         "onia"       : NTupleCollection("Onia",   ZTypeLite, 20, help="Dilepton Candidates"),
-         "genleps"    : NTupleCollection("genlep", genParticleWithAncestryType, 10, help="generated leptons from direct decays"),
-         #"genParticles"    : NTupleCollection("genAll", genParticleWithMotherId, 10, help="generated leptons from direct decays"),
+         "genleps"       : NTupleCollection("genlep", genParticleWithAncestryType, 10, help="generated leptons from direct decays"),
+         "genMesons"     : NTupleCollection("genMeson", genParticleWithAncestryType, 10, help="generated Jpsi/Upsilon from direct decays"),
+         "selectedMuons" : NTupleCollection("mu", MuonType, 10, help="selected Muons"),
+         "onia"          : NTupleCollection("Onia",   ZTypeLite, 20, help="Dilepton Candidates"),
          #"selectedLeptons" : NTupleCollection("Lep", leptonTypeHZZ, 10, help="Leptons after the preselection"),
      },
      defaultFloatType = 'F',
