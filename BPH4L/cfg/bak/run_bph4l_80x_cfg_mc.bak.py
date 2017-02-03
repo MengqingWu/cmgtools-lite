@@ -7,32 +7,52 @@ from CMGTools.BPH4L.fwlite.Config import printComps
 from CMGTools.BPH4L.RootTools import *
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
+
 #Load all common analyzers
-from CMGTools.BPH4L.analyzers.bph4lCore_cff import *
+from CMGTools.BPH4L.analyzers.coreBPH4l_cff import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.BPH4L.samples.loadSamples80x import *
-
 selectedComponents = mcSamples+dataSamples
 
-#-------- SEQUENCE
+triggerFlagsAna.triggerBits ={
+    "jpsi2mu":triggers_jpsi2mu,
+    "upsilon2mu":triggers_upsilon2mu,
+    "3mu":triggers_3mu,
+}
 
-bph4lObjSequence.remove(jetAna)
-bph4lObjSequence.remove(metAna)
-sequence = cfg.Sequence(bph4lPreSequence + bph4lObjSequence + [
-    twoLeptonAnalyzerOnia, 
-    #twoLeptonEventSkimmerOnia, 
-    twoLeptonTreeProducerOnia,
-    dumpEvents,
-])
+#-------- Analyzer
+from CMGTools.BPH4L.analyzers.treeBPH4l_cff import *
+
+#-------- SEQUENCE
+coreSequence = [
+    skimAnalyzer,
+    #genAna,
+    jsonAna,
+    triggerAna,
+    pileUpAna,
+    vertexAna,
+    lepAna,
+    jetAna,
+    #metAna,
+    #photonAna,
+    lepCombAna,
+    #multiStateAna,
+    triggerFlagsAna,
+]
+
+#print "[debug]: coreSequence ==> ", coreSequence
+#sequence = cfg.Sequence(coreSequence)
+#sequence = cfg.Sequence(coreSequence+[vvSkimmer,fullTreeProducer])
+sequence = cfg.Sequence(coreSequence+[MuonTreeProducer])
+#print "[debug]: sequence ==>", sequence
 
 #-------- HOW TO RUN
-test = 0
+test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = mcSamples
-    #selectedComponents = [JpsiToMuMu_OniaMuFilter]
-    #selectedComponents = [JpsiToMuMu_Pt8]
+    #selectedComponents = mcSamples
+    selectedComponents = [JpsiToMuMu_OniaMuFilter]
     #selectedComponents = [UpsilonToMuMu_Pt6]
     for c in selectedComponents:
         #print '[debug]:', c.files
@@ -56,7 +76,7 @@ output_service = cfg.Service(
     TFileService,
     'outputfile',
     name="outputfile",
-    fname='bph4lTreeProducer/tree.root',
+    fname='vvTreeProducer/tree.root',
     option='recreate'
     )
 outputService.append(output_service)
