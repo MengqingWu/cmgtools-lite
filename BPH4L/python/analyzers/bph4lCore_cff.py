@@ -18,7 +18,7 @@ from CMGTools.BPH4L.analyzers.objects.BPH4lJetAnalyzer import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lGenAnalyzer import *
 #from CMGTools.BPH4L.tools.leptonID  import *
 
-from CMGTools.HToZZ4L.analyzers.TwoLeptonAnalyzer import TwoLeptonAnalyzer
+from CMGTools.BPH4L.analyzers.TwoLeptonAnalyzer import TwoLeptonAnalyzer
 from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lMultiFinalState  import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lMultTrgEff import *
@@ -32,12 +32,19 @@ from CMGTools.BPH4L.analyzers.bph4l_Tree import *
 # define analyzers
 ###########################
 
+from CMGTools.BPH4L.analyzers.objects.BPH4lFastLepSkimmer import BPH4lFastLepSkimmer
+
+fastSkim2L = cfg.Analyzer(
+    BPH4lFastLepSkimmer, name="fastLepSkim2L",
+    muons = 'slimmedMuons', #muCut = lambda mu : mu.pt() > 2,
+    electrons = 'slimmedElectrons', #eleCut = lambda ele : ele.pt() > 7,
+    minLeptons = 2,
+)
+
 skimAnalyzer = cfg.Analyzer(
     SkimAnalyzerCount, name='skimAnalyzerCount',
     useLumiBlocks = False,
     )
-
-from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
 
 
 # Apply json file (if the dataset has one)
@@ -319,8 +326,9 @@ twoLeptonAnalyzerOnia = cfg.Analyzer(
     mode = "Onia",
     muonID = "POG_ID_Soft",
     electronID = "POG_MVA_ID_NonTrig", #FIXME: random choice
+    ## if oniaMassMxx is commented out, default value 2.5 < Mll < 12 is used:
     oniaMassMin = 2.5,
-    oniaMassMax = 3.8,
+    #oniaMassMax = 3.8,
 )
 
 twoLeptonEventSkimmerOnia = cfg.Analyzer(
