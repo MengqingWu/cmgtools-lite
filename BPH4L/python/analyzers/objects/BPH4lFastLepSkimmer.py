@@ -6,7 +6,7 @@ import ROOT,itertools
 
 class BPH4lFastLepSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
-        super(ttHFastLepSkimmer,self).__init__(cfg_ana,cfg_comp,looperName)
+        super(BPH4lFastLepSkimmer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.muIdCut = self.cfg_ana.muCut
         self.eleIdCut = self.cfg_ana.eleCut
         self.requireSameSignPair = getattr(cfg_ana,"requireSameSignPair",False)
@@ -15,12 +15,12 @@ class BPH4lFastLepSkimmer( Analyzer ):
         self.maxMll = getattr(cfg_ana, 'maxMll', None)
 
     def declareHandles(self):
-        super(ttHFastLepSkimmer, self).declareHandles()
+        super(BPH4lFastLepSkimmer, self).declareHandles()
         self.handles['muons'] = AutoHandle(self.cfg_ana.muons,"std::vector<pat::Muon>")            
         self.handles['electrons'] = AutoHandle(self.cfg_ana.electrons,"std::vector<pat::Electron>")            
 
     def beginLoop(self, setup):
-        super(ttHFastLepSkimmer,self).beginLoop(setup)
+        super(BPH4lFastLepSkimmer,self).beginLoop(setup)
         self.counters.addCounter('events')
         self.count = self.counters.counter('events')
         self.count.register('all events')
