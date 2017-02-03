@@ -60,8 +60,8 @@ class TwoLeptonAnalyzer( Analyzer ):
             if event.onia: self.counters.counter('TwoLepton').inc('pass onia')
 
     def leptonID(self, lepton):
-        if abs(lepton.pdgId())==11: return lepton.muonID(self.muonId)
-        elif abs(lepton.pdgId())==13: return lepton.electronID(self.electronId)
+        if abs(lepton.pdgId())==13: return lepton.muonID(self.muonId)
+        elif abs(lepton.pdgId())==11: return lepton.electronID(self.electronId)
         else: return self.leptonID_tight(lepton)
             
     def leptonID_tight(self,lepton):
