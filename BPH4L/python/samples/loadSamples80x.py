@@ -39,6 +39,7 @@ MuOnia=[MuOnia_Run2016B_ReRecoV1,
         MuOnia_Run2016E_ReRecoV1,
         MuOnia_Run2016F_ReRecoV1,
         MuOnia_Run2016G_ReRecoV1,
+        MuOnia_Run2016H_PromptRecoV2,
 ]
 Charmonium=[Charmonium_Run2016B_ReRecoV1,
             Charmonium_Run2016B_ReRecoV2,
@@ -47,6 +48,7 @@ Charmonium=[Charmonium_Run2016B_ReRecoV1,
             Charmonium_Run2016E_ReRecoV1,
             Charmonium_Run2016F_ReRecoV1,
             Charmonium_Run2016G_ReRecoV1,
+            Charmonium_Run2016H_PromptRecoV2,
 ]
 
 for s in MuOnia:
@@ -74,7 +76,7 @@ jsonDir='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
 #goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279588_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
 #goldenJson = 'Cert_271036-277933_13TeV_PromptReco_Collisions16_JSON_MuonPhys.txt'
-goldenJson = 'Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt' # Luminosity: 36.63/fb 
+goldenJson = 'Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt' # Luminosity: 37.196/fb 
 
 #run_range = (271036,279588)
 #run_range = (273013, 276811) # 12.9/fb
@@ -86,6 +88,7 @@ jsonFile = jsonDir + goldenJson
 from CMGTools.BPH4L.setup.Efficiencies import *
 dataDir = "$CMSSW_BASE/src/CMGTools/BPH4L/data"
 
+## Please refer to : https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 for comp in mcSamples:
     comp.isMC = True
     comp.isData = False
@@ -93,6 +96,7 @@ for comp in mcSamples:
     # puFile are used for pileup reweighting:
     comp.puFileMC=dataDir+"/pileup_MC_80x_271036-276811_68075.root"  # TBD: to update @Jan-24-2017
     comp.puFileData=dataDir+"/pileup_DATA_80x_271036-276811_68075.root" # TBD: to update @Jan-24-2017
+    #comp.puFileData = dataDir+"/puFile/pileup_data.root" 
     comp.eSFinput=dataDir+"/CutBasedID_LooseWP_76X_18Feb.txt_SF2D.root" # TBD: to update @Jan-24-2017
     comp.efficiency = eff2012
     #comp.triggers=triggers_1mu_noniso+triggers_1e_noniso
@@ -106,7 +110,7 @@ for comp in dataSamples:
     comp.json = jsonFile
     comp.run_range = run_range
     #comp.globalTag = "Summer15_25nsV6_DATA"
-    comp.globalTag = "80X_dataRun2_2016SeptRepro_v3"
+    comp.globalTag = "80X_dataRun2_2016SeptRepro_v5"
 
 if __name__ == "__main__":
     import sys
