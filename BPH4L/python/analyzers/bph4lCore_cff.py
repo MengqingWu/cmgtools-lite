@@ -36,8 +36,8 @@ from CMGTools.BPH4L.analyzers.objects.BPH4lFastLepSkimmer import BPH4lFastLepSki
 
 fastSkim2L = cfg.Analyzer(
     BPH4lFastLepSkimmer, name="fastLepSkim2L",
-    muons = 'slimmedMuons', #muCut = lambda mu : mu.pt() > 2,
-    electrons = 'slimmedElectrons', #eleCut = lambda ele : ele.pt() > 7,
+    muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 0,
+    electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 7,
     minLeptons = 2,
 )
 
