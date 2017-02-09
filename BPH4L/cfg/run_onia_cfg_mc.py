@@ -30,10 +30,10 @@ sequence = cfg.Sequence(bph4lPreSequence + bph4lObjSequence + [
 test = 0
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = mcSamples
+    #selectedComponents = mcSamples
     #selectedComponents = [JpsiToMuMu_OniaMuFilter]
     #selectedComponents = [JpsiToMuMu_Pt8]
-    #selectedComponents = [UpsilonToMuMu_Pt6]
+    selectedComponents = [UpsilonToMuMu_Pt6]
     for c in selectedComponents:
         #print '[debug]:', c.files
         c.files = c.files[:1]

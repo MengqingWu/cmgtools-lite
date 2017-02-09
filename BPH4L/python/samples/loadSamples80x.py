@@ -52,8 +52,8 @@ Charmonium=[Charmonium_Run2016B_ReRecoV1,
 ]
 
 for s in MuOnia:
-    #s.triggers = triggers_upsilon2mu + triggers_3mu
-    s.triggers = [] 
+    s.triggers = triggers_upsilon2mu + triggers_jpsi2mu
+    #s.triggers = [] 
     s.vetoTriggers = []
 for s in Charmonium:
     #s.triggers = triggers_jspi2mu
@@ -99,8 +99,8 @@ for comp in mcSamples:
     #comp.puFileData = dataDir+"/puFile/pileup_data.root" 
     comp.eSFinput=dataDir+"/CutBasedID_LooseWP_76X_18Feb.txt_SF2D.root" # TBD: to update @Jan-24-2017
     comp.efficiency = eff2012
-    #comp.triggers=triggers_1mu_noniso+triggers_1e_noniso
-    comp.triggers= []
+    comp.triggers =  triggers_upsilon2mu + triggers_jpsi2mu
+    #comp.triggers= []
     comp.globalTag = "80X_mcRun2_asymptotic_2016_miniAODv2_v1"
 
 for comp in dataSamples:

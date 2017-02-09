@@ -33,7 +33,7 @@ test = 1
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = dataSamples
-    selectedComponents = [MuOnia_Run2016E_ReRecoV1]# MuOnia_Run2016B_ReRecoV1, MuOnia_Run2016E_ReRecoV1, MuOnia_Run2016G_ReRecoV1, MuOnia_Run2016H_PromptRecoV2]
+    selectedComponents = [MuOnia_Run2016E_ReRecoV1]# MuOnia_Run2016B_ReRecoV1, MuOnia_Run2016E/F/G_ReRecoV1, MuOnia_Run2016H_PromptRecoV2]
     #selectedComponents = MuOnia
     #selectedComponents = Charmonium
     for c in selectedComponents:
@@ -47,7 +47,7 @@ elif test==0:
     #selectedComponents = dataSamples
     selectedComponents = MuOnia
     for c in selectedComponents:
-        c.splitFactor = (len(c.files)/10 if len(c.files)>10 else 1)
+        c.splitFactor = (len(c.files)/5 if len(c.files)>5 else 1)
 else:
     print " == check your config python file mode! (test==1 or 0) == "
     exit
