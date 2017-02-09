@@ -1,10 +1,8 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
-## updated from Jan-20-2017
-## according to https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#MC_for_Moriond_2017
-## using  dataset=/*/RunIISummer16MiniAODv2*PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6*/MINIAODSIM
-## recommended release: 8_0_25 or later
+## updated from Feb-09-2017
+## signal samples only avaiable with RunIIFall15MiniAODv2 versionss (for 2015 data only)
 #####COMPONENT CREATOR
 
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
@@ -29,14 +27,4 @@ H0ToUps1SMuMu_m36 = kreator.makeMCComponent("H0ToUps1SMuMu_m36","/H0ToUps1SMuMu_
 H0ToUps1SMuMu_m50 = kreator.makeMCComponent("H0ToUps1SMuMu_m50","/H0ToUps1SMuMu_m50_TuneCUEP8M1_13TeV-pythia8/"+McMtagger+"/MINIAODSIM", "CMS", ".*root", 999, useAAA=False)
 
 
-### DiBosons
 
-### ggZZ
-
-GJetsHT = [
-GJets_HT40to100,
-GJets_HT100to200,
-GJets_HT200to400,
-GJets_HT400to600,
-GJets_HT600toInf
-]
