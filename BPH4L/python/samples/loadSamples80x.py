@@ -11,7 +11,7 @@ import os
 #from CMGTools.BPH4L.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 from CMGTools.BPH4L.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 # Load signals
-#from CMGTools.BPH4L.samples.samples_13TeV_signal80X import *
+from CMGTools.BPH4L.samples.signals_13TeV import *
 # Load Data 
 from CMGTools.BPH4L.samples.samples_13TeV_DATA2016 import *
 # Load triggers
@@ -19,14 +19,43 @@ from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
 
 
 # backgrounds
-backgroundSamples =[JpsiToMuMu_Pt8,
-                    JpsiToMuMu_OniaMuFilter,
-                    IncJpsiToMuMu_Pt3,
-                    UpsilonToMuMu_Pt6,
+SingleJPsi = [JpsiToMuMu_Pt8,
+              JpsiToMuMu_OniaMuFilter,
+              IncJpsiToMuMu_Pt3,
 ]
 
+SingleUpsilon = [UpsilonToMuMu_Pt6,
+]
+
+DYJetsMlow = [DYJetsToLL_M10to50,
+              DYJetsToLL_M5to50,
+]
+
+Bdecay = [BsToJpsiPhi,
+          BsToMuMuPhi,
+          BdToKstarMuMu,
+          BdToJPsiKs,
+]
+
+backgroundSamples = SingleJPsi + SingleUpsilon + DYJetsMlow + Bdecay
+
 # signals
-signalSamples = []
+Chib0 = [Chib0ToUps1SMuMu_m11,
+         Chib0ToUps1SMuMu_m15,
+         Chib0ToUps1SMuMu_m18p5,
+         Chib0ToUps1SMuMu_m25,
+         Chib0ToUps1SMuMu_m36,
+         Chib0ToUps1SMuMu_m50,
+]
+H0 = [H0ToUps1SMuMu_m11,
+      H0ToUps1SMuMu_m15,
+      H0ToUps1SMuMu_m18p5,
+      H0ToUps1SMuMu_m25,
+      H0ToUps1SMuMu_m36,
+      H0ToUps1SMuMu_m50,
+]
+
+signalSamples = Chib0 + H0
 
 # MC samples
 mcSamples = signalSamples + backgroundSamples
@@ -116,7 +145,7 @@ if __name__ == "__main__":
     import sys
     if "test" in sys.argv:
         from CMGTools.RootTools.samples.ComponentCreator import testSamples
-        testSamples(dataSamples)
+        testSamples(dataSamples+mcSamples)
     if "locality" in sys.argv:
         import re
         from CMGTools.Production.localityChecker import LocalityChecker

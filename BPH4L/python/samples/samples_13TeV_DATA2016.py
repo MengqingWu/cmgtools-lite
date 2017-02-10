@@ -71,7 +71,7 @@ Charmonium_Run2016G_ReRecoV1 = kreator.makeDataComponent("Charmonium_Run2016G_Re
 
 ### ----------------------------- Run2016H PromptReco v2 ----------------------------------------
 MuOnia_Run2016H_PromptRecoV2 = kreator.makeDataComponent("MuOnia_Run2016H_PromptRecoV2", "/MuOnia/Run2016H-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json, run_range=run_range, useAAA=True)
-Charmonium_Run2016H_PromptRecoV2 = kreator.makeDataComponent("Charmonium_Run2016H_PromptRecoV2", "/Charmonium/Run2016H-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json,run_range=run_range)
+Charmonium_Run2016H_PromptRecoV2 = kreator.makeDataComponent("Charmonium_Run2016H_PromptRecoV2", "/Charmonium/Run2016H-PromptReco-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json,run_range=run_range, useAAA=True)
 
 ### ----------------------------- summary ----------------------------------------
 

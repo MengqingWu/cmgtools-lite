@@ -34,6 +34,7 @@ MuFourType =  NTupleObjectType("VVType", baseObjectTypes=[], variables = [
 
 leptonTypeHZZLite = NTupleObjectType("leptonHZZLite", baseObjectTypes = [ particleType ], variables = [
     NTupleVariable("charge",   lambda x : x.charge(), int),
+    NTupleVariable("index",    lambda x : x.index, int),  
     # ----------------------
     NTupleVariable("softMuonId",  lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==13 else 1, int, help="Muon POG Soft id, 1 for electrons"),
     NTupleVariable("tightId",     lambda x : x.tightId(), int, help="POG Tight ID (for electrons it's configured in the analyzer)"),
