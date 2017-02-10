@@ -35,7 +35,29 @@ IncJpsiToMuMu_Pt3 = kreator.makeMCComponent("IncJpsiToMuMu_Pt3","/InclusiveBtoJp
 UpsilonToMuMu_Pt6 = kreator.makeMCComponent("UpsilonToMuMu_Pt6","/UpsilonMuMu_UpsilonPt6_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 10890000*0.0395, useAAA=False) #M evts  xsect in pb
 
 
+## # B meson background:
 
+# Bs decay from RunII Bs To Jpsi Phi analysis, DGamma=0, 80X DR needed, xsect from MCM w/ BPH-RunIISummer15GS-00072
+#  twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BPH-RunIISummer15GS-BsToJpsiPhi
+BsToJpsiPhi = kreator.makeMCComponent("BsToJpsiPhi","/BsToJpsiPhi_BMuonFilter_DGamma0_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 16320000000*0.00041, useAAA=False) #M evts xsect in pb
+
+#  twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BPH-RunIISummer15GS-BsToPhiMuMu
+# Bs -> Phi (KK) mumu, xsect from MCM w/ BPH-RunIISummer15GS-00080
+BsToMuMuPhi = kreator.makeMCComponent("BsToMuMuPhi","/BsToMuMuPhi_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM","CMS", ".*root", 56790000000*0.000116, useAAA=False) #M evts xsect in pb
+
+
+# B0 decay, xsect from MCM w/ BPH-RunIISummer15GS-00007
+BdToKstarMuMu = kreator.makeMCComponent("BsToJpsiPhi","/BdToKstarMuMu_BFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 78420000000*0.0069, useAAA=False) #M evts xsect in pb
+
+BdToJPsiKs = kreator.makeMCComponent("BdToJPsiKs","/BdToKstarMuMu_BFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 78420000000*0.0069, useAAA=False) #M evts xsect in pb
+
+## # continuous nonresonant mumu DY background:
+
+##    xsect from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns#DY_Z
+DYJetsToLL_M10to50 = kreator.makeMCComponent("DYJetsToLL_M10to50", "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 18610, useAAA=False) #M evts, NLO xsect in pb
+
+# The mll in (5,50) sample exists in 2015 only: 
+DYJetsToLL_M5to50 = kreator.makeMCComponent("DYJetsToLL_M5to50", "/DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM", "CMS", ".*root", 71310, useAAA=True) #9.3M evts, LO xsect in pb
 
 ####*********************** stale from xzz2l2v ***********************####
 # # Photon+Jets
