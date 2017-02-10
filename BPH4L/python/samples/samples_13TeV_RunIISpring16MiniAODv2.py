@@ -39,7 +39,10 @@ UpsilonToMuMu_Pt6 = kreator.makeMCComponent("UpsilonToMuMu_Pt6","/UpsilonMuMu_Up
 
 # Bs decay from RunII Bs To Jpsi Phi analysis, DGamma=0, 80X DR needed, xsect from MCM w/ BPH-RunIISummer15GS-00072
 #  twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BPH-RunIISummer15GS-BsToJpsiPhi
-BsToJpsiPhi = kreator.makeMCComponent("BsToJpsiPhi","/BsToJpsiPhi_BMuonFilter_DGamma0_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 16320000000*0.00041, useAAA=False) #M evts xsect in pb
+#BsToJpsiPhi_dGamma0 = kreator.makeMCComponent("BsToJpsiPhi_dGamma0","/BsToJpsiPhi_BMuonFilter_DGamma0_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 16320000000*0.00041, useAAA=False) #M evts xsect in pb
+
+# xsect from MCM w/ BPH-RunIISummer15GS-00028:
+BsToJpsiPhi = kreator.makeMCComponent("BsToJpsiPhi","/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 16320000000*0.00041, useAAA=False) #M evts xsect in pb
 
 #  twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BPH-RunIISummer15GS-BsToPhiMuMu
 # Bs -> Phi (KK) mumu, xsect from MCM w/ BPH-RunIISummer15GS-00080
