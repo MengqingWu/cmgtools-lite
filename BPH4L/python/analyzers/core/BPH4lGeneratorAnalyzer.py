@@ -10,7 +10,7 @@ def interestingPdgId(id,includeLeptons=False):
     id = abs(id)
     return id in [6,7,8,17,18] or (includeLeptons and 11 <= id and id < 16) or (22 <= id and id < 40) or id > 1000000 or (id in [443, 100443, 553, 100553, 200553])
 
-class GeneratorAnalyzer( Analyzer ):
+class BPH4lGeneratorAnalyzer( Analyzer ):
     """Save the hard-scattering final state of the event: top quarks, gauge & higgs bosons and BSM
        particles, plus their immediate decay products, and their siblings (in order to get the jets
        from matched X+jets generation.
@@ -52,7 +52,7 @@ class GeneratorAnalyzer( Analyzer ):
        """
 
     def __init__(self, cfg_ana, cfg_comp, looperName ):
-        super(GeneratorAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
+        super(BPH4lGeneratorAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.stableBSMParticleIds  = set(cfg_ana.stableBSMParticleIds) # neutralinos and such
         self.saveMesonParticleIds  = set(cfg_ana.saveMesonParticleIds)
         self.savePreFSRParticleIds = set(cfg_ana.savePreFSRParticleIds)
@@ -61,11 +61,11 @@ class GeneratorAnalyzer( Analyzer ):
         self.allGenTaus            = cfg_ana.allGenTaus if self.makeSplittedGenLists else False
  
     def declareHandles(self):
-        super(GeneratorAnalyzer, self).declareHandles()
+        super(BPH4lGeneratorAnalyzer, self).declareHandles()
         self.mchandles['genParticles'] = AutoHandle( 'prunedGenParticles', 'std::vector<reco::GenParticle>' )
                 
     def beginLoop(self,setup):
-        super(GeneratorAnalyzer,self).beginLoop(setup)
+        super(BPH4lGeneratorAnalyzer,self).beginLoop(setup)
 
     def makeMCInfo(self, event):
         verbose = getattr(self.cfg_ana, 'verbose', False)
@@ -284,8 +284,8 @@ class GeneratorAnalyzer( Analyzer ):
         return True
 
 import PhysicsTools.HeppyCore.framework.config as cfg
-setattr(GeneratorAnalyzer,"defaultConfig",
-    cfg.Analyzer(GeneratorAnalyzer,
+setattr(BPH4lGeneratorAnalyzer,"defaultConfig",
+    cfg.Analyzer(BPH4lGeneratorAnalyzer,
         # BSM particles that can appear with status <= 2 and should be kept
         stableBSMParticleIds = [ 1000022 ], 
         # Particles of which we want to save the pre-FSR momentum (a la status 3).

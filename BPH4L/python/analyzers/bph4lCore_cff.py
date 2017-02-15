@@ -3,8 +3,8 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 
 from PhysicsTools.Heppy.analyzers.core.all import * # SkimAnalyzerCount, pileupAna and JsonAna
 from PhysicsTools.Heppy.analyzers.objects.all import *  
-#from PhysicsTools.Heppy.analyzers.gen.all import * # GeneratorAnalyzer
-from CMGTools.BPH4L.analyzers.core.GeneratorAnalyzer import *
+from PhysicsTools.Heppy.analyzers.gen.all import * # LHEWeightAnalyzer and pdfWeightAna
+from CMGTools.BPH4L.analyzers.core.BPH4lGeneratorAnalyzer import *
 from PhysicsTools.HeppyCore.utils.deltar import *
 
 from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
@@ -78,7 +78,7 @@ pileUpAna = cfg.Analyzer(
 
 # Gen Info Analyzer (generic):
 genAna = cfg.Analyzer(
-    GeneratorAnalyzer, name="GeneratorAnalyzer",
+    BPH4lGeneratorAnalyzer, name="BPH4lGeneratorAnalyzer",
     # BSM particles that can appear with status <= 2 and should be kept
     stableBSMParticleIds = [], #[ 1000022 ],
     # Particles of which we want to save the pre-FSR momentum (a la status 3).
@@ -98,6 +98,18 @@ genAna = cfg.Analyzer(
     verbose = False,
     printPdgId = 443, # info print only with verbose on
 )
+
+lheWeightAna = cfg.Analyzer(
+    LHEWeightAnalyzer, name="LHEWeightAnalyzer",
+    useLumiInfo=False
+)
+
+PDFWeights = []                                                                                                                                             
+pdfwAna = cfg.Analyzer(
+    PDFWeightsAnalyzer, name="PDFWeightsAnalyzer",
+    PDFWeights = [ pdf for pdf,num in PDFWeights ],
+    
+    )
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -328,8 +340,7 @@ twoLeptonAnalyzerOnia = cfg.Analyzer(
     muonID = "POG_ID_Soft",
     electronID = "POG_MVA_ID_NonTrig", #FIXME: random choice
     ## if oniaMassMxx is commented out, default value 2.5 < Mll < 12 is used:
-    oniaMassMin = 50,
-    oniaMassMax = 100,
+    oniaMassMin = 2.5,
     #oniaMassMax = 3.8,
 )
 
@@ -345,6 +356,7 @@ twoLeptonEventSkimmerOnia = cfg.Analyzer(
 ###########################
 
 bph4lPreSequence = [
+    #lheWeightAna,  # new added, FIXME
     skimAnalyzer,
     jsonAna,
     triggerAna,
@@ -353,6 +365,7 @@ bph4lPreSequence = [
 bph4lObjSequence = [
     genAna,
     pileUpAna,
+    #pdfwAna, # new added, FIXME
     vertexAna,
     lepAna,
     jetAna,
