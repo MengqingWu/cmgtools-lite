@@ -40,9 +40,9 @@ MuonTreeProducer = cfg.Analyzer(
      vectorTree = True,
      saveTLorentzVectors = True,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
-     globalVariables = bph4l_globalVariables
+     globalVariables = bph4l_globalVariables,
      globalObjects =  {
-         #"met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, with 76X type 1 corrections"),
+         "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, with 76X type 1 corrections"),
          #"met_miniAod" : NTupleObject("met", metType, help="PF E_{T}^{miss} stored in miniAOD"),
      },
      collections = {

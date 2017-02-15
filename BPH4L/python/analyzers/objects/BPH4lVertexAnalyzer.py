@@ -104,10 +104,8 @@ class BPH4lVertexAnalyzer( Analyzer ):
         event.sigma = self.handles['sigma'].product()[0] if self.handles['sigma'].isValid() else -999
         event.vertices = self.handles['vertices'].product()
         event.goodVertices = filter(self.testGoodVertex,event.vertices)
-
-
+        
         self.count.inc('All Events')
-
         
         event.vertexWeight = 1
         if self.cfg_comp.isMC:
