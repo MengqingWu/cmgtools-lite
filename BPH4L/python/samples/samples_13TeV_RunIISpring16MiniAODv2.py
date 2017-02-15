@@ -50,9 +50,8 @@ BsToMuMuPhi = kreator.makeMCComponent("BsToMuMuPhi","/BsToMuMuPhi_BMuonFilter_So
 
 
 # B0 decay, xsect from MCM w/ BPH-RunIISummer15GS-00007
-BdToKstarMuMu = kreator.makeMCComponent("BsToJpsiPhi","/BdToKstarMuMu_BFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 78420000000*0.0069, useAAA=False) #M evts xsect in pb
+BdToKstarMuMu = kreator.makeMCComponent("BdToKstarMuMu","/BdToKstarMuMu_BFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 78420000000*0.0069, useAAA=False) #M evts xsect in pb
 
-BdToJPsiKs = kreator.makeMCComponent("BdToJPsiKs","/BdToKstarMuMu_BFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM","CMS", ".*root", 78420000000*0.0069, useAAA=False) #M evts xsect in pb
 
 ## # continuous nonresonant mumu DY background:
 

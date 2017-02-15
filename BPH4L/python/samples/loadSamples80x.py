@@ -34,7 +34,6 @@ DYJetsMlow = [DYJetsToLL_M10to50,
 Bdecay = [BsToJpsiPhi,
           BsToMuMuPhi,
           BdToKstarMuMu,
-          BdToJPsiKs,
 ]
 
 backgroundSamples = SingleJPsi + SingleUpsilon + DYJetsMlow + Bdecay
