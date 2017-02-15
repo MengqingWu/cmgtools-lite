@@ -27,7 +27,7 @@ sequence = cfg.Sequence(bph4lPreSequence + bph4lObjSequence + [
 ])
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = mcSamples
@@ -43,8 +43,8 @@ if test==1:
         #c.triggers=triggers_1mu_noniso
         #c.triggers=triggers_1e_noniso
 elif test==0:
-    selectedComponents = mcSamples
-    #selectedComponents = [BdToKstarMuMu]
+    #selectedComponents = mcSamples
+    selectedComponents = [DYJetsToLL_M5to50]
     for c in selectedComponents:
         c.splitFactor = (len(c.files)/10 if len(c.files)>10 else 1)
 else:
