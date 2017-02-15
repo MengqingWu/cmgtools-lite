@@ -22,6 +22,7 @@
 <!-- <use name="MagneticField/Engine"/> -->
 <use name="MagneticField/Records"/>
 <use name="MagneticField/ParametrizedEngine"/>
+<use name="RecoVertex/KalmanVertexFit"/>
 <export>
    <lib name="1"/>
 </export>

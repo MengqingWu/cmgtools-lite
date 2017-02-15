@@ -1,3 +1,6 @@
 <lcgdict>
+
   <class name="QuadObjFactory"/>
+  <class name="bph4lVertexFitter"/>
+
 </lcgdict>

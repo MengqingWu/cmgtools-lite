@@ -3,6 +3,10 @@ from CMGTools.BPH4L.tools.DiObject import DiObject
 
 import itertools
 
+from ROOT import gSystem
+gSystem.Load("libCMGToolsBPH4L")
+from ROOT import bph4lVertexFitter
+#from bph4lVertexFitter import KalmanVertex
     
 class TwoLeptonAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
@@ -13,6 +17,8 @@ class TwoLeptonAnalyzer( Analyzer ):
         self.electronId = getattr(cfg_ana, "electronId", "POG_MVA_ID_NonTrig")
         self.oniaMassMin = getattr(cfg_ana, "oniaMassMin", 2.5) # inclusive range as default
         self.oniaMassMax = getattr(cfg_ana, "oniaMassMax", 12) # inclusive range as default
+        #self.vtxFitter = bph4lVertexFitter()
+        self.vtxKalman = bph4lVertexFitter.KalmanVertex
         
     def beginLoop(self, setup):
         super(TwoLeptonAnalyzer,self).beginLoop(setup)
@@ -57,6 +63,18 @@ class TwoLeptonAnalyzer( Analyzer ):
                 
         elif self.mode == "Onia":
             event.onia = filter(self.oniaMassFilter, event.allPairs)
+            for ionia in event.onia:
+                mu1 = ionia.leg1
+                mu2 = ionia.leg2
+                
+                myVtx = self.vtxKalman(mu1.physObj, mu2.physObj)
+                myVtx.ComputeCTau(mu1.associatedVertex)
+                ionia.vtx = myVtx
+                print "[debug]", mu1, mu2
+                print "[debug] vtx (chi2 = %.2f, prob = %.2f, ndf = %.2f, nchi2 = %.2f, ctau = %.2f, cosAlpha = %.2f)" % (myVtx.Chi2(), myVtx.Prob(), myVtx.NDF(), myVtx.NChi2(), myVtx.ctau(), myVtx.cosAlpha())
+                print "[debug] PV-mu1, chi2 = %.2f, ndof = %s" % (mu1.associatedVertex.chi2(), mu1.associatedVertex.ndof())
+                print "[debug] PV-mu2, chi2 = %.2f, ndof = %s" % (mu2.associatedVertex.chi2(), mu2.associatedVertex.ndof())
+
             if event.onia: self.counters.counter('TwoLepton').inc('pass onia')
 
     def leptonID(self, lepton):
@@ -99,7 +117,7 @@ class TwoLeptonAnalyzer( Analyzer ):
                 continue;
             if (l1.pdgId()<l2.pdgId())!=0: 
                 continue;
-
+            
             twoObject = DiObject(l1, l2)
             out.append(twoObject)
 
