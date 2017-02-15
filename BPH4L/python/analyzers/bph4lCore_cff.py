@@ -8,7 +8,7 @@ from CMGTools.BPH4L.analyzers.core.GeneratorAnalyzer import *
 from PhysicsTools.HeppyCore.utils.deltar import *
 
 from CMGTools.BPH4L.samples.triggers_13TeV_Spring16 import *
-from CMGTools.BPH4L.analyzers.core.BPH4lTriggerBitFilter import *
+#from CMGTools.BPH4L.analyzers.core.BPH4lTriggerBitFilter import * # counters existed now in central Heppy.analyzers.core
 
 from CMGTools.BPH4L.analyzers.objects.BPH4lLeptonAnalyzer import *
 from CMGTools.BPH4L.analyzers.objects.BPH4lVertexAnalyzer import *
@@ -56,7 +56,8 @@ jsonAna = cfg.Analyzer(
 
 # Filter using the 'triggers' and 'vetoTriggers' specified in the dataset
 triggerAna = cfg.Analyzer(
-    BPH4lTriggerBitFilter, name="TriggerBitFilter",
+    #BPH4lTriggerBitFilter, name="TriggerBitFilter",
+    TriggerBitFilter, name="TriggerBitFilter",
     )
 
 # This analyzer actually does the pile-up reweighting (generic)
@@ -327,7 +328,8 @@ twoLeptonAnalyzerOnia = cfg.Analyzer(
     muonID = "POG_ID_Soft",
     electronID = "POG_MVA_ID_NonTrig", #FIXME: random choice
     ## if oniaMassMxx is commented out, default value 2.5 < Mll < 12 is used:
-    oniaMassMin = 2.5,
+    oniaMassMin = 50,
+    oniaMassMax = 100,
     #oniaMassMax = 3.8,
 )
 
