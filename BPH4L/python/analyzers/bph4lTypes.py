@@ -72,10 +72,21 @@ leptonTypeHZZLite = NTupleObjectType("leptonHZZLite", baseObjectTypes = [ partic
     NTupleVariable("hlt1L", lambda x : getattr(x,'matchedTrgObj1El',None) != None or  getattr(x,'matchedTrgObj1Mu',None) != None, int, help="Matched to single lepton trigger"),
 ])
 
+bph4lVtxType = NTupleObjectType("bph4lVtxType", baseObjectTypes=[], variables = [
+    NTupleVariable("chi2",  lambda x : x.Chi2(), help="chi2 of fitted vertex"),
+    NTupleVariable("ndof",  lambda x : x.NDF(), help="n degrees of freedom for chi2 test of fitted vertex"),
+    NTupleVariable("prob",  lambda x : x.Prob(), help="chi2 probability of fitted vertex"),
+    NTupleVariable("nchi2", lambda x : x.NChi2(), help="normalized chi2 of fitted vertex"),
+    NTupleVariable("ctau",  lambda x : x.ctau(), help="lifetime ctau (wrt PV) of fitted vertex"),
+    NTupleVariable("cosAlpha",  lambda x : x.cosAlpha(), help="angle between Lxy(PV, fit vtx) and Mll(Jpsi or other diObj resonance)"),
+])
+
+
 ZTypeLite = NTupleObjectType("ZTypeLite", baseObjectTypes=[fourVectorType], variables = [
     #NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),
     NTupleSubObject("l1",  lambda x : x.leg1,leptonTypeHZZLite),
     NTupleSubObject("l2",  lambda x : x.leg2,leptonTypeHZZLite),
+    NTupleSubObject("vtx",  lambda x : x.vtx, bph4lVtxType),
     NTupleVariable("mll",  lambda x : (x.leg1.p4() + x.leg2.p4()).M(), help="Dilepton mass, without FSR"),
 ])
 #****
