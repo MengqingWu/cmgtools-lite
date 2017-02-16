@@ -37,39 +37,39 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
         #Ask for four goodleptons
         passed = cutFlow.applyCut(self.leptonID,'At least four good non isolated Leptons',4,'goodLeptons')
 
-
         #Create Four Lepton Candidates
-        subevent.fourLeptonPreCands = self.findOSSFQuads(cutFlow.obj1)
+        subevent.fourLeptonPreCands = self.findOSSFQuads(cutFlow.obj1) #obj1 refers to event.selectedLeptons
         cutFlow.setSource1(subevent.fourLeptonPreCands)
 
         #Apply isolation on all legs
-        passed=cutFlow.applyCut(self.fourLeptonIsolation,'At least four OSSF Isolated leptons   ',1,'fourLeptonsIsolated')
+        #passed=cutFlow.applyCut(self.fourLeptonIsolation,'At least four OSSF Isolated leptons   ',1,'fourLeptonsIsolated')
 
         #Apply minimum Z mass
         passed=cutFlow.applyCut(self.fourLeptonMassZ1Z2,'Z masses between 12 and 120 GeV',1,'fourLeptonsZMass')
 
         #Apply ghost suppression
-        passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsGhostSuppressed')
-
+        #passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsGhostSuppressed')
+        passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsFinal')
+        
         #Pt Thresholds
-        passed=cutFlow.applyCut(self.fourLeptonPtThresholds,'Pt 20 and 10 GeV',1,'fourLeptonsPtThresholds')
+        #passed=cutFlow.applyCut(self.fourLeptonPtThresholds,'Pt 20 and 10 GeV',1,'fourLeptonsPtThresholds')
 
         #QCD suppression
-        passed=cutFlow.applyCut(self.qcdSuppression,'QCD suppression',1,'fourLeptonsPtThresholds')
+        #passed=cutFlow.applyCut(self.qcdSuppression,'QCD suppression',1,'fourLeptonsPtThresholds')
 
         #Z1 mass
-        passed=cutFlow.applyCut(self.fourLeptonMassZ1,'Z1 Mass cut',1,'fourLeptonsMass')
+        #passed=cutFlow.applyCut(self.fourLeptonMassZ1,'Z1 Mass cut',1,'fourLeptonsMass')
 
         #smart cut
-        passed=cutFlow.applyCut(self.stupidCut,'Smart cut',1,'fourLeptonsFinal')
+        #passed=cutFlow.applyCut(self.stupidCut,'Smart cut',1,'fourLeptonsFinal')
 
         #attach jets
-        for quad in subevent.fourLeptonsFinal:
-            self.attachJets(quad,event.cleanJets)
+        #for quad in subevent.fourLeptonsFinal:
+        #    self.attachJets(quad,event.cleanJets)
         
         #compute MELA
-        for quad in subevent.fourLeptonsFinal:
-            self.fillMEs(quad,quad.cleanJets)
+        # for quad in subevent.fourLeptonsFinal:
+        #     self.fillMEs(quad,quad.cleanJets)
 
         #Save the best
         if len(subevent.fourLeptonsFinal)>0:
@@ -117,10 +117,10 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
             setattr(event,'bestFourLeptons'+self.tag,[])
 
         #FSR test
-        passedFSR=cutFlow.applyCut(lambda x: x.hasFSR(),'FSR tagged',1,'fourLeptonsFSR')
-        if passedFSR:
-            for c in subevent.fourLeptonsFSR:
-                #print 'Mass' ,c.fsrUncorrected().M(),c.M()
-                pass
+        #passedFSR=cutFlow.applyCut(lambda x: x.hasFSR(),'FSR tagged',1,'fourLeptonsFSR')
+        #if passedFSR:
+        #    for c in subevent.fourLeptonsFSR:
+        #        #print 'Mass' ,c.fsrUncorrected().M(),c.M()
+        #        pass
 
         return True        

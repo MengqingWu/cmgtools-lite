@@ -25,9 +25,8 @@ if test==1:
     # test a single component, using a single thread.
     #selectedComponents = mcSamples
     #selectedComponents = [JpsiToMuMu_OniaMuFilter]
-    selectedComponents = [DYJetsToLL_M5to50]
+    selectedComponents = [UpsilonToMuMu_Pt6]
     #selectedComponents = signalSamples
-    print "debug: ", selectedComponents
     for c in selectedComponents:
         #print '[debug]:', c.files
         c.files = c.files[:1]

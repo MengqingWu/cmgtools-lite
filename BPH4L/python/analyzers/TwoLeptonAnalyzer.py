@@ -19,6 +19,7 @@ class TwoLeptonAnalyzer( Analyzer ):
         self.oniaMassMax = getattr(cfg_ana, "oniaMassMax", 12) # inclusive range as default
         #self.vtxFitter = bph4lVertexFitter()
         self.vtxKalman = bph4lVertexFitter.KalmanVertex
+        self.verbose = getattr(cfg_ana, "verbose", False)
         
     def beginLoop(self, setup):
         super(TwoLeptonAnalyzer,self).beginLoop(setup)
@@ -26,7 +27,7 @@ class TwoLeptonAnalyzer( Analyzer ):
         count = self.counters.counter('TwoLepton')
         count.register('all events')
         count.register('all pairs')
-        if self.mode == "Z":
+        if self.mode == "Z": # FIXME: never test 'Z' mode @Feb-2017
             count.register('pass iso')
             count.register('best Z')
         elif self.mode == "Onia":
@@ -64,19 +65,25 @@ class TwoLeptonAnalyzer( Analyzer ):
         elif self.mode == "Onia":
             event.onia = filter(self.oniaMassFilter, event.allPairs)
             for ionia in event.onia:
-                mu1 = ionia.leg1
-                mu2 = ionia.leg2
-                
-                myVtx = self.vtxKalman(mu1.physObj, mu2.physObj)
-                myVtx.ComputeCTau(mu1.associatedVertex)
-                ionia.vtx = myVtx
-                print "[debug]", mu1, mu2
-                print "[debug] vtx (chi2 = %.2f, prob = %.2f, ndf = %.2f, nchi2 = %.2f, ctau = %.2f, cosAlpha = %.2f)" % (myVtx.Chi2(), myVtx.Prob(), myVtx.NDF(), myVtx.NChi2(), myVtx.ctau(), myVtx.cosAlpha())
-                print "[debug] PV-mu1, chi2 = %.2f, ndof = %s" % (mu1.associatedVertex.chi2(), mu1.associatedVertex.ndof())
-                print "[debug] PV-mu2, chi2 = %.2f, ndof = %s" % (mu2.associatedVertex.chi2(), mu2.associatedVertex.ndof())
+                self.attachVtx(ionia)
 
             if event.onia: self.counters.counter('TwoLepton').inc('pass onia')
 
+    def attachVtx(self, diObj):
+        ''' attach a fitted vertex the input diObject'''
+        
+        mu1 = diObj.leg1
+        mu2 = diObj.leg2
+                
+        myVtx = self.vtxKalman(mu1.physObj, mu2.physObj)
+        myVtx.ComputeCTau(mu1.associatedVertex)
+        diObj.vtx = myVtx
+        if self.verbose:
+            print "[debug]", mu1, mu2
+            print "[debug] vtx (chi2 = %.2f, prob = %.2f, ndf = %.2f, nchi2 = %.2f, ctau = %.2f, cosAlpha = %.2f)" % (myVtx.Chi2(), myVtx.Prob(), myVtx.NDF(), myVtx.NChi2(), myVtx.ctau(), myVtx.cosAlpha())
+            print "[debug] PV-mu1, chi2 = %.2f, ndof = %s" % (mu1.associatedVertex.chi2(), mu1.associatedVertex.ndof())
+            print "[debug] PV-mu2, chi2 = %.2f, ndof = %s" % (mu2.associatedVertex.chi2(), mu2.associatedVertex.ndof())
+                    
     def leptonID(self, lepton):
         if abs(lepton.pdgId())==13: return lepton.muonID(self.muonId)
         elif abs(lepton.pdgId())==11: return lepton.electronID(self.electronId)

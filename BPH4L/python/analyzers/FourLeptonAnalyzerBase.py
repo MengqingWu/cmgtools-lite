@@ -44,12 +44,14 @@ class EventBox(object):
 class FourLeptonAnalyzerBase( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(FourLeptonAnalyzerBase,self).__init__(cfg_ana,cfg_comp,looperName)
-        doMEs = getattr(cfg_ana, 'doMEs', True)
-        # if doMEs:
-        #     self._MEMs = ROOT.MEMCalculatorsWrapper(13.0,125.0)
-        # else:
-        self._MEMs = False
-            
+
+        self.muonId = getattr(cfg_ana, "muonId", "POG_ID_Soft")
+        self.electronId = getattr(cfg_ana, "electronId", "POG_MVA_ID_NonTrig")
+        
+        self.mode = getattr(cfg_ana, "mode", "jpsi+Y") #cfg_ana.mode
+        print "[info] FourLeptonAnalyzer: running the %s mode!" % (self.mode)
+        if self.mode not in [ "jpsi+Y", "jpsi+jpsi" ]: raise RuntimeError, "Unsupported mode"
+
     def declareHandles(self):
         super(FourLeptonAnalyzerBase, self).declareHandles()
 
@@ -67,17 +69,25 @@ class FourLeptonAnalyzerBase( Analyzer ):
     def leptonID_loose(self,lepton):
         return True    
 
-
     def leptonID(self,lepton):
-        return self.leptonID_tight(lepton)
-
+        if abs(lepton.pdgId())==13: return lepton.muonID(self.muonId)
+        elif abs(lepton.pdgId())==11: return lepton.electronID(self.electronId)
+        else: return self.leptonID_tight(lepton) # just a stale stuff from HZZ algo
 
     def muonIsolation(self,lepton):
-        return lepton.relIsoAfterFSR < 0.35 
+        #return lepton.relIsoAfterFSR < 0.35
+        # below was copied from BPH4L/python/analyzers/objects/BPH4lLeptonAnalyzer.py @Feb-2017
+        return lepton.trackerIso < 0.2
 
-    def electronIsolation(self,lepton):
-        return lepton.relIsoAfterFSR < 0.35
-
+    def electronIsolation(self,lepton): 
+        #return lepton.relIsoAfterFSR < 0.35
+        # below was copied from BPH4L/python/analyzers/objects/BPH4lLeptonAnalyzer.py @Feb-2017
+        if abs(lepton.physObj.superCluster().eta())<1.479:
+            lepton.looseiso=True if lepton.relIsoea03<0.0893 else False
+        else:
+            lepton.looseiso=True if lepton.relIsoea03<0.121 else False
+        return lepton.looseiso
+    
     def diLeptonMass(self,dilepton):
         return dilepton.M()>12.0 and dilepton.M()<120.
 
@@ -111,7 +121,6 @@ class FourLeptonAnalyzerBase( Analyzer ):
         bestByZ1 = min(quads, key = lambda quad : abs(quad.leg1.M()-91.1876))
         #print "Best alternate, mZ1 %.3f, mZ2 %.3f: %s" % (bestByZ1.leg1.M(),bestByZ1.leg2.M(),bestByZ1)
         return bestByZ1.leg2.M() > 12.
-
 
 
 
@@ -181,30 +190,3 @@ class FourLeptonAnalyzerBase( Analyzer ):
                 continue
            quad.cleanJets.append(j)
            quad.cleanJetIndices.append(ij)
-
- 
-    # def fillMEs(self,quad,jets):
-    #     if not self._MEMs:
-    #         quad.KDs = collections.defaultdict(lambda : -999)
-    #         quad.KD  = -999
-    #         return
-    #     legs = [ quad.leg1.leg1, quad.leg1.leg2, quad.leg2.leg1, quad.leg2.leg2 ]
-    #     lvs  = [ l.p4WithFSR() for l in legs ]
-    #     ids  = [ l.pdgId()     for l in legs ]
-    #     jp4s = ROOT.std.vector(ROOT.math.XYZTLorentzVector)()
-    #     for j in jets: jp4s.push_back(j.p4())
-    #     quad.melaAngles = self._MEMs.computeAngles(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3])
-    #     quad.KDs = {}
-    #     for KD in self._MEMs.computeNew(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3], jp4s):
-    #         quad.KDs[KD.first] = KD.second
-    #     quad.KD = quad.KDs["D_bkg^kin"]
-    #     # now the mixed discriminants
-    #     if len(jets) >= 2:
-    #         PgPq2 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1) * (1/jets[1].qgl() - 1 if jets[1].qgl() > 0 else 1) 
-    #         quad.KDs["D_VBF2J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq2, 1./3)) if PgPq2 > 0 else -99
-    #         quad.KDs["D_WHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^WH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
-    #         quad.KDs["D_ZHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^ZH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
-    #     elif len(jets) == 1:
-    #         PgPq1 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1)
-    #         quad.KDs["D_VBF1J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq1, 1./3)) if  PgPq1 > 0 else -99
-

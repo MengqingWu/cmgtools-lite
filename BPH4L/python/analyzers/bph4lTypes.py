@@ -91,7 +91,7 @@ ZTypeLite = NTupleObjectType("ZTypeLite", baseObjectTypes=[fourVectorType], vari
 ])
 
 ZZType = NTupleObjectType("ZZType", baseObjectTypes=[fourVectorType], variables = [
-    NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),
+    #NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),
     NTupleSubObject("z1",  lambda x : x.leg1, ZTypeLite),
     NTupleSubObject("z2",  lambda x : x.leg2, ZTypeLite),
     NTupleVariable("mll_12",   lambda x : (x.leg1.leg1.p4()+x.leg1.leg2.p4()).M()),

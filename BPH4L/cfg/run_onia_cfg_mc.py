@@ -34,7 +34,7 @@ if test==1:
     #selectedComponents = [JpsiToMuMu_OniaMuFilter]
     selectedComponents = [DYJetsToLL_M5to50]
     #selectedComponents = signalSamples
-    print "debug: ", selectedComponents
+    #print "debug: ", selectedComponents
     for c in selectedComponents:
         #print '[debug]:', c.files
         c.files = c.files[:1]

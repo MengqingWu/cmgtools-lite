@@ -353,7 +353,7 @@ twoLeptonEventSkimmerOnia = cfg.Analyzer(
 fourLeptonAnalyzerSignal = cfg.Analyzer(
     FourLeptonAnalyzer, name="fourLeptonAnalyzerSignal",
     tag = "Signal", 
-    sortAlgo = "bestKD",
+    sortAlgo = "legacy",  # "bestKD",
     attachFsrToGlobalClosestLeptonOnly = True
 )
 
