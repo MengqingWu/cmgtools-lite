@@ -18,6 +18,7 @@ from CMGTools.BPH4L.analyzers.objects.BPH4lJetAnalyzer import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lGenAnalyzer import *
 #from CMGTools.BPH4L.tools.leptonID  import *
 
+from CMGTools.BPH4L.analyzers.FourLeptonAnalyzer import FourLeptonAnalyzer
 from CMGTools.BPH4L.analyzers.TwoLeptonAnalyzer import TwoLeptonAnalyzer
 from CMGTools.BPH4L.analyzers.BPH4lLepCombMaker import *
 #from CMGTools.BPH4L.analyzers.bak.BPH4lMultiFinalState  import *
@@ -349,7 +350,12 @@ twoLeptonEventSkimmerOnia = cfg.Analyzer(
     required = ['onia']
 )
 
-
+fourLeptonAnalyzerSignal = cfg.Analyzer(
+    FourLeptonAnalyzer, name="fourLeptonAnalyzerSignal",
+    tag = "Signal", 
+    sortAlgo = "bestKD",
+    attachFsrToGlobalClosestLeptonOnly = True
+)
 
 ###########################
 # Core sequence of all common modules
@@ -379,6 +385,13 @@ bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [
     #multiStateAna,
     #leptonSkimmer,
     MuonTreeProducer,
+    #packedAna,
+    dumpEvents,
+]
+
+bph4lFourLepSequence = bph4lPreSequence + bph4lObjSequence + [   
+    fourLeptonAnalyzerSignal, 
+    fourLeptonTreeProducer,
     #packedAna,
     dumpEvents,
 ]

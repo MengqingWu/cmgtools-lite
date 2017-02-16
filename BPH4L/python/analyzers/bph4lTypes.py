@@ -89,6 +89,19 @@ ZTypeLite = NTupleObjectType("ZTypeLite", baseObjectTypes=[fourVectorType], vari
     NTupleSubObject("vtx",  lambda x : x.vtx, bph4lVtxType),
     NTupleVariable("mll",  lambda x : (x.leg1.p4() + x.leg2.p4()).M(), help="Dilepton mass, without FSR"),
 ])
+
+ZZType = NTupleObjectType("ZZType", baseObjectTypes=[fourVectorType], variables = [
+    NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),
+    NTupleSubObject("z1",  lambda x : x.leg1, ZTypeLite),
+    NTupleSubObject("z2",  lambda x : x.leg2, ZTypeLite),
+    NTupleVariable("mll_12",   lambda x : (x.leg1.leg1.p4()+x.leg1.leg2.p4()).M()),
+    NTupleVariable("mll_13",   lambda x : (x.leg1.leg1.p4()+x.leg2.leg1.p4()).M()),
+    NTupleVariable("mll_14",   lambda x : (x.leg1.leg1.p4()+x.leg2.leg2.p4()).M()),
+    NTupleVariable("mll_23",   lambda x : (x.leg1.leg2.p4()+x.leg2.leg1.p4()).M()),
+    NTupleVariable("mll_24",   lambda x : (x.leg1.leg2.p4()+x.leg2.leg2.p4()).M()),
+    NTupleVariable("mll_34", lambda x : (x.leg2.leg1.p4()+x.leg2.leg2.p4()).M()),
+])
+    
 #****
 #**** Below are from XZZ2l2v
 #****

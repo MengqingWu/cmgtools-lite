@@ -45,11 +45,11 @@ class FourLeptonAnalyzerBase( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(FourLeptonAnalyzerBase,self).__init__(cfg_ana,cfg_comp,looperName)
         doMEs = getattr(cfg_ana, 'doMEs', True)
-        if doMEs:
-            self._MEMs = ROOT.MEMCalculatorsWrapper(13.0,125.0)
-        else:
-            self._MEMs = False
-
+        # if doMEs:
+        #     self._MEMs = ROOT.MEMCalculatorsWrapper(13.0,125.0)
+        # else:
+        self._MEMs = False
+            
     def declareHandles(self):
         super(FourLeptonAnalyzerBase, self).declareHandles()
 
@@ -183,28 +183,28 @@ class FourLeptonAnalyzerBase( Analyzer ):
            quad.cleanJetIndices.append(ij)
 
  
-    def fillMEs(self,quad,jets):
-        if not self._MEMs:
-            quad.KDs = collections.defaultdict(lambda : -999)
-            quad.KD  = -999
-            return
-        legs = [ quad.leg1.leg1, quad.leg1.leg2, quad.leg2.leg1, quad.leg2.leg2 ]
-        lvs  = [ l.p4WithFSR() for l in legs ]
-        ids  = [ l.pdgId()     for l in legs ]
-        jp4s = ROOT.std.vector(ROOT.math.XYZTLorentzVector)()
-        for j in jets: jp4s.push_back(j.p4())
-        quad.melaAngles = self._MEMs.computeAngles(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3])
-        quad.KDs = {}
-        for KD in self._MEMs.computeNew(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3], jp4s):
-            quad.KDs[KD.first] = KD.second
-        quad.KD = quad.KDs["D_bkg^kin"]
-        # now the mixed discriminants
-        if len(jets) >= 2:
-            PgPq2 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1) * (1/jets[1].qgl() - 1 if jets[1].qgl() > 0 else 1) 
-            quad.KDs["D_VBF2J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq2, 1./3)) if PgPq2 > 0 else -99
-            quad.KDs["D_WHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^WH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
-            quad.KDs["D_ZHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^ZH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
-        elif len(jets) == 1:
-            PgPq1 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1)
-            quad.KDs["D_VBF1J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq1, 1./3)) if  PgPq1 > 0 else -99
+    # def fillMEs(self,quad,jets):
+    #     if not self._MEMs:
+    #         quad.KDs = collections.defaultdict(lambda : -999)
+    #         quad.KD  = -999
+    #         return
+    #     legs = [ quad.leg1.leg1, quad.leg1.leg2, quad.leg2.leg1, quad.leg2.leg2 ]
+    #     lvs  = [ l.p4WithFSR() for l in legs ]
+    #     ids  = [ l.pdgId()     for l in legs ]
+    #     jp4s = ROOT.std.vector(ROOT.math.XYZTLorentzVector)()
+    #     for j in jets: jp4s.push_back(j.p4())
+    #     quad.melaAngles = self._MEMs.computeAngles(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3])
+    #     quad.KDs = {}
+    #     for KD in self._MEMs.computeNew(lvs[0],ids[0], lvs[1],ids[1], lvs[2],ids[2], lvs[3],ids[3], jp4s):
+    #         quad.KDs[KD.first] = KD.second
+    #     quad.KD = quad.KDs["D_bkg^kin"]
+    #     # now the mixed discriminants
+    #     if len(jets) >= 2:
+    #         PgPq2 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1) * (1/jets[1].qgl() - 1 if jets[1].qgl() > 0 else 1) 
+    #         quad.KDs["D_VBF2J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq2, 1./3)) if PgPq2 > 0 else -99
+    #         quad.KDs["D_WHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^WH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
+    #         quad.KDs["D_ZHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^ZH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
+    #     elif len(jets) == 1:
+    #         PgPq1 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1)
+    #         quad.KDs["D_VBF1J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq1, 1./3)) if  PgPq1 > 0 else -99
 
