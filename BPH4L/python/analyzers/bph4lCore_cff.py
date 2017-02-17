@@ -398,6 +398,7 @@ bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [
 
 bph4lFourLepSequence = bph4lPreSequence + bph4lObjSequence + [   
     fourLeptonAnalyzerSignal, # no filter applied
+    fourLeptonEventSkimmer,
     fourLeptonTreeProducer,
     #packedAna,
     dumpEvents,

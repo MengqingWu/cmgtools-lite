@@ -20,7 +20,7 @@ selectedComponents = mcSamples + dataSamples + signalSamples
 sequence = cfg.Sequence(bph4lFourLepSequence)
 
 #-------- HOW TO RUN
-test = 0
+test = 1
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = mcSamples
