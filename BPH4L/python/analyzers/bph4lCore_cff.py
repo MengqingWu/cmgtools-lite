@@ -357,6 +357,13 @@ fourLeptonAnalyzerSignal = cfg.Analyzer(
     attachFsrToGlobalClosestLeptonOnly = True
 )
 
+
+fourLeptonEventSkimmer = cfg.Analyzer(
+    EventSkimmer, name="fourLeptonEventSkimmer",
+    required = ['bestFourLeptonsSignal' ]
+
+)
+
 ###########################
 # Core sequence of all common modules
 ###########################
@@ -390,7 +397,7 @@ bph4lCoreSequence = bph4lPreSequence + bph4lObjSequence + [
 ]
 
 bph4lFourLepSequence = bph4lPreSequence + bph4lObjSequence + [   
-    fourLeptonAnalyzerSignal, 
+    fourLeptonAnalyzerSignal, # no filter applied
     fourLeptonTreeProducer,
     #packedAna,
     dumpEvents,

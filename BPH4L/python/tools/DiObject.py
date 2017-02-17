@@ -53,3 +53,8 @@ class DiObject( TLorentzVector ):
     #     return self.daughterPhotons() != [] 
 
    
+    def deltaPhi(self):
+        return deltaPhi(self.leg1.Phi(),self.leg2.Phi())
+
+    def deltaR(self):
+        return deltaR(self.leg1.Eta(),self.leg1.Phi(),self.leg2.Eta(),self.leg2.Phi())

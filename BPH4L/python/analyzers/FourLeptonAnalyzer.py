@@ -45,11 +45,12 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
         #passed=cutFlow.applyCut(self.fourLeptonIsolation,'At least four OSSF Isolated leptons   ',1,'fourLeptonsIsolated')
 
         #Apply minimum Z mass
-        passed=cutFlow.applyCut(self.fourLeptonMassZ1Z2,'Z masses between 12 and 120 GeV',1,'fourLeptonsZMass')
+        #passed=cutFlow.applyCut(self.fourLeptonMassZ1Z2,'Z masses between 12 and 120 GeV',1,'fourLeptonsZMass')
+        passed=cutFlow.applyCut(self.fourLeptonMassOnia,'Onia masses between '+str(self.oniaMassMin)+' and '+str(self.oniaMassMax)+' GeV',1,'fourLeptonsFinal')
 
         #Apply ghost suppression
         #passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsGhostSuppressed')
-        passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsFinal')
+        #passed=cutFlow.applyCut(self.ghostSuppression,'Ghost suppression ',1,'fourLeptonsFinal')
         
         #Pt Thresholds
         #passed=cutFlow.applyCut(self.fourLeptonPtThresholds,'Pt 20 and 10 GeV',1,'fourLeptonsPtThresholds')
@@ -67,15 +68,16 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
         #for quad in subevent.fourLeptonsFinal:
         #    self.attachJets(quad,event.cleanJets)
         
-        #compute MELA
-        # for quad in subevent.fourLeptonsFinal:
-        #     self.fillMEs(quad,quad.cleanJets)
+        #attach vtx
+        for quad in subevent.fourLeptonsFinal:
+            self.attachVtxQuad(quad)
 
         #Save the best
         if len(subevent.fourLeptonsFinal)>0:
             if self.sortAlgo == "legacy":
                 subevent.fourLeptonsFinal.sort(key = lambda x: x.leg2.leg1.pt()+x.leg2.leg2.pt(), reverse = True)
-                subevent.fourLeptonsFinal.sort(key = lambda x: abs(x.leg1.M()-91.1876))
+                #subevent.fourLeptonsFinal.sort(key = lambda x: abs(x.leg1.M()-91.1876))
+                
             elif self.sortAlgo == "bestKD":
                 debug = self.debug
 

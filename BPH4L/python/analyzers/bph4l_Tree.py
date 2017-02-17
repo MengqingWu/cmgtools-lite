@@ -20,7 +20,7 @@ bph4l_globalObjects = {
 
 bph4l_collections = {
     #"MuFour"        : NTupleCollection("mu4", MuFourType, 5, help="4-mu combination"),
-    "bestFourLeptonsSignal" : NTupleCollection("zz", ZZType, 1, help="Four Lepton Candidates"), 
+    "bestFourLeptonsSignal" : NTupleCollection("quad", ZZType, 1, help="Four Lepton Candidates"), 
     # # ---------------
     "jets_raw"   : NTupleCollection("jet", jetType,15, help="all jets from miniAOD"),
     "selectedMuons" : NTupleCollection("mu", MuonType, 10, help="selected Muons"),
@@ -35,7 +35,7 @@ bph4l_collections = {
 
 fourLeptonTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='fourLeptonTreeProducer',
-     vectorTree = False,
+     vectorTree = True,
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      globalVariables = bph4l_globalVariables,
      globalObjects = bph4l_globalObjects,

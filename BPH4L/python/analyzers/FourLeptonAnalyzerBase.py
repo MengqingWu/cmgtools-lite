@@ -13,6 +13,10 @@ import itertools
 import collections
 import ROOT
 
+from ROOT import gSystem
+gSystem.Load("libCMGToolsBPH4L")
+from ROOT import bph4lVertexFitter
+
 class EventBox(object):
     def __init__(self):
         pass
@@ -52,6 +56,11 @@ class FourLeptonAnalyzerBase( Analyzer ):
         print "[info] FourLeptonAnalyzer: running the %s mode!" % (self.mode)
         if self.mode not in [ "jpsi+Y", "jpsi+jpsi" ]: raise RuntimeError, "Unsupported mode"
 
+        self.oniaMassMin = getattr(cfg_ana, "oniaMassMin", 2.5) # inclusive range as default
+        self.oniaMassMax = getattr(cfg_ana, "oniaMassMax", 12) # inclusive range as default
+
+        self.vtxKalman = bph4lVertexFitter.KalmanVertex
+                
     def declareHandles(self):
         super(FourLeptonAnalyzerBase, self).declareHandles()
 
@@ -87,15 +96,13 @@ class FourLeptonAnalyzerBase( Analyzer ):
         else:
             lepton.looseiso=True if lepton.relIsoea03<0.121 else False
         return lepton.looseiso
+
+    def oniaMassFilter(self,twoLepton):
+        return twoLepton.mll() > self.oniaMassMin and twoLepton.mll() < self.oniaMassMax
+
+    def fourLeptonMassOnia(self, fourLepton):
+        return self.oniaMassFilter(fourLepton.leg1) and self.oniaMassFilter(fourLepton.leg2)
     
-    def diLeptonMass(self,dilepton):
-        return dilepton.M()>12.0 and dilepton.M()<120.
-
-    def fourLeptonMassZ1Z2(self,fourLepton):
-        return self.diLeptonMass(fourLepton.leg1) and self.diLeptonMass(fourLepton.leg2)
-
-    def fourLeptonMassZ1(self,fourLepton):
-        return fourLepton.leg1.M()>40.0 and fourLepton.leg1.M()<120. # usually implied in fourLeptonMassZ1Z2 but sometimes needed independently
 
     def stupidCut(self,fourLepton):
         #if not 4mu/4e  pass 
@@ -123,22 +130,11 @@ class FourLeptonAnalyzerBase( Analyzer ):
         return bestByZ1.leg2.M() > 12.
 
 
-
     def fourLeptonPtThresholds(self, fourLepton):
         leading_pt = fourLepton.sortedPtLeg(0).pt() 
         subleading_pt = fourLepton.sortedPtLeg(1).pt() 
         return leading_pt>20  and subleading_pt>10
-
-
-    def fourLeptonIsolation(self,fourLepton):
-        for l in fourLepton.daughterLeptons():
-            if abs(l.pdgId())==11:
-                if not self.electronIsolation(l):
-                    return False
-            if abs(l.pdgId())==13:
-                if not self.muonIsolation(l):
-                    return False
-        return True        
+    
 
     def ghostSuppression(self, fourLepton):
         leptons = fourLepton.daughterLeptons()
@@ -146,12 +142,6 @@ class FourLeptonAnalyzerBase( Analyzer ):
             if deltaR(l1.eta(),l1.phi(),l2.eta(),l2.phi())<0.02:
                 return False
         return True    
-
-
-
-    def qcdSuppression(self, fourLepton):
-        return fourLepton.minPairMll(onlyOS=True)>4.0
-
         
     def zSorting(self,Z1,Z2):
         return abs(Z1.M()-91.1876) <= abs(Z2.M()-91.1876)
@@ -173,12 +163,76 @@ class FourLeptonAnalyzerBase( Analyzer ):
                 continue;
 
             quadObject =DiObjectPair(l1, l2,l3,l4)
+
+            if hasattr(quadObject.leg1, "vtx") and hasattr(quadObject.leg2, "vtx"): pass
+            else:
+                self.attachVtxDuo(quadObject.leg1)
+                self.attachVtxDuo(quadObject.leg2)
+            
             if not self.zSorting(quadObject.leg1,quadObject.leg2):
                 continue
             out.append(quadObject)
 
         return out
+
+    def attachVtxDuo(self, diObj):
+        ''' attach a fitted vertex the input diObject'''
+        mu1 = diObj.leg1
+        mu2 = diObj.leg2
                 
+        myVtx = self.vtxKalman(mu1.physObj, mu2.physObj)
+        myVtx.ComputeCTau(mu1.associatedVertex)
+        diObj.vtx = myVtx
+
+        verbose = False
+        if verbose:
+            print "[debug]", mu1, mu2
+            print "[debug] vtx (chi2 = %.2f, prob = %.2f, ndf = %.2f, nchi2 = %.2f, ctau = %.2f, cosAlpha = %.2f)" % (myVtx.Chi2(), myVtx.Prob(), myVtx.NDF(), myVtx.NChi2(), myVtx.ctau(), myVtx.cosAlpha())
+            print "[debug] PV-mu1, chi2 = %.2f, ndof = %s" % (mu1.associatedVertex.chi2(), mu1.associatedVertex.ndof())
+            print "[debug] PV-mu2, chi2 = %.2f, ndof = %s" % (mu2.associatedVertex.chi2(), mu2.associatedVertex.ndof())
+
+
+    def attachVtxQuad(self, fourLep):
+        ''' attach a fitted vertex the input diObject'''
+        mu1 = fourLep.leg1.leg1
+        mu2 = fourLep.leg1.leg2
+        mu3 = fourLep.leg2.leg1
+        mu4 = fourLep.leg2.leg2
+        
+        myVtx = self.vtxKalman(mu1.physObj, mu2.physObj, mu3.physObj, mu4.physObj)
+        #myVtx.ComputeCTau(mu1.associatedVertex)
+        fourLep.vtx = myVtx
+        verbose = False
+        if verbose:
+            print "[debug] quad vtx (chi2 = %.2f, prob = %.2f, ndf = %.2f, nchi2 = %.2f, ctau = %.2f, cosAlpha = %.2f)" % (myVtx.Chi2(), myVtx.Prob(), myVtx.NDF(), myVtx.NChi2(), myVtx.ctau(), myVtx.cosAlpha())
+            print "[debug]   mu index = %s, %s, %s, %s" % (mu1.index, mu2.index, mu3.index, mu4.index)
+            print "[debug]   mu pdgId = %s, %s, %s, %s" % (mu1.pdgId(), mu2.pdgId(), mu3.pdgId(), mu4.pdgId())
+            print "[debug]   mu pdgId = %s, %s, %s, %s" % (mu1.charge(), mu2.charge(), mu3.charge(), mu4.charge())
+            
+    ##-------- stale functions:
+    def diLeptonMass(self,dilepton):
+        return dilepton.M()>12.0 and dilepton.M()<120.
+
+    def fourLeptonMassZ1Z2(self,fourLepton):
+        return self.diLeptonMass(fourLepton.leg1) and self.diLeptonMass(fourLepton.leg2)
+
+    def fourLeptonMassZ1(self,fourLepton):
+        return fourLepton.leg1.M()>40.0 and fourLepton.leg1.M()<120. # usually implied in fourLeptonMassZ1Z2 but sometimes needed independently
+
+    
+    def qcdSuppression(self, fourLepton):
+        return fourLepton.minPairMll(onlyOS=True)>4.0
+
+    def fourLeptonIsolation(self,fourLepton):
+        for l in fourLepton.daughterLeptons():
+            if abs(l.pdgId())==11:
+                if not self.electronIsolation(l):
+                    return False
+            if abs(l.pdgId())==13:
+                if not self.muonIsolation(l):
+                    return False
+        return True
+    
     def attachJets(self,quad,jets):
         # must clean jets from the leptons in the candidate in addition to the ones already cleaned
         leptonsAndPhotons = quad.daughterLeptons() + quad.daughterPhotons()

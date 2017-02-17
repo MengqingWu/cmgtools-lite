@@ -20,12 +20,12 @@ selectedComponents = mcSamples + dataSamples + signalSamples
 sequence = cfg.Sequence(bph4lFourLepSequence)
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
     #selectedComponents = mcSamples
     #selectedComponents = [JpsiToMuMu_OniaMuFilter]
-    selectedComponents = [UpsilonToMuMu_Pt6]
+    selectedComponents = [H0ToUps1SMuMu_m15]
     #selectedComponents = signalSamples
     for c in selectedComponents:
         #print '[debug]:', c.files

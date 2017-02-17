@@ -1,6 +1,9 @@
 # copy from CMGTools/HToZZ4L/python/tools                                                                                                                   
 from ROOT import TLorentzVector
 from CMGTools.HToZZ4L.tools.DiObject import DiObject
+from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
+
+
 class DiObjectPair( TLorentzVector ):
     '''Class used for A->VV'''
     def __init__(self, leg1, leg2,leg3,leg4):
@@ -86,8 +89,8 @@ class DiObjectPair( TLorentzVector ):
     def __str__(self):
         return ', '.join( ['DiObjectPair:', str(self.leg1), str(self.leg2)] )
 
-    def hasFSR(self):
-        return self.leg1.hasFSR() or self.leg2.hasFSR()
+    #def hasFSR(self):
+    #    return self.leg1.hasFSR() or self.leg2.hasFSR()
 
     def daughterLeptons(self):
         return [self.leg1.leg1,self.leg1.leg2,self.leg2.leg1,self.leg2.leg2]
@@ -95,3 +98,8 @@ class DiObjectPair( TLorentzVector ):
     def daughterPhotons(self):
         return self.leg1.daughterPhotons()+self.leg2.daughterPhotons()
         
+    def deltaR(self):
+        return deltaR(self.leg1.Eta(),self.leg1.Phi(),self.leg2.Eta(),self.leg2.Phi())
+
+    def deltaPhi(self):
+        return deltaPhi(self.leg1.Phi(),self.leg2.Phi())
